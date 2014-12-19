@@ -8,6 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+using System.Text.RegularExpressions;
+
 using CallStateViewer.Parser;
 using CallStateViewer.Model;
 
@@ -26,13 +28,26 @@ namespace CallStateViewer
             mDataGridView.AutoGenerateColumns = false;
         }
 
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+
+            if ( 0 < Environment.GetCommandLineArgs().Length )
+            {
+                LoadFiles(Environment.GetCommandLineArgs());
+            }
+        }
+
         private void LoadFiles( string[] files )
         {
             records.Clear();
 
             foreach ( string logfile in files )
             {
-                records.AddRange(MainReportParser.Parse(logfile));
+                if (Regex.Match(logfile, @"MainReportLog_\d{5}\.txt$").Success )
+                {
+                    records.AddRange(MainReportParser.Parse(logfile));
+                }
             }
 
             var callIds = from record in records
@@ -48,6 +63,9 @@ namespace CallStateViewer
                           };
 
 
+            var earliestTimestamp = records.Min(record => record.Timestamp);
+            var latestTimestamp = records.Max(record => record.Timestamp);
+
             var callIdsBindingSource = new BindingSource();
             callIdsBindingSource.DataSource = callIds;
 
@@ -58,7 +76,8 @@ namespace CallStateViewer
             mCallIdDataGridView.Width = mCallIdDataGridView.PreferredSize.Width;
             mCallIdDataGridView.Columns[3].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
 
-
+            numberOfCallsLoadedStatusLabel.Text = String.Format("{0} Calls Loaded", callIds.Count());
+            timespanOfLoadedCallsStatusLabel.Text = String.Format("Timespan: {0} - {1}", earliestTimestamp, latestTimestamp);
         }
 
         private void mDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
