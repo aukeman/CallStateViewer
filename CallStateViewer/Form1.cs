@@ -195,16 +195,35 @@ namespace CallStateViewer
 
             if ( DataGridViewHitTestType.Cell == hitTestInfo.Type )
             {
-                string callId = mCallIdDataGridView.Rows[hitTestInfo.RowIndex].Cells[0].Value.ToString();
-
-                EventHandler handler = delegate(object sender2, EventArgs e2)
+                var callId = mCallIdDataGridView.Rows[hitTestInfo.RowIndex].Cells[0].Value.ToString();
+                var selectedCallIdRows = mCallIdDataGridView.SelectedRows;
+                
+                var copyCallId = new ToolStripMenuItem(String.Format("Copy \"{0}\" to Clipboard", callId), null, new EventHandler(delegate(object sender2, EventArgs e2)
                 {
                     Clipboard.SetText(callId);
-                };
+                }));
 
-                ToolStripMenuItem copy = new ToolStripMenuItem(String.Format("Copy \"{0}\" to Clipboard", callId), null, handler);
+                contextMenuStrip1.Items.Add(copyCallId);
 
-                contextMenuStrip1.Items.Add(copy);
+                if ( 0 < selectedCallIdRows.Count )
+                {
+                    var label = 
+                        String.Format("Copy selected Call ID{0} to Clipboard", (1 < selectedCallIdRows.Count ? "s" : ""));
+
+                    var copySelectedCallIds = new ToolStripMenuItem(label, null, new EventHandler(delegate(object sender2, EventArgs e2)
+                    {
+                        // if the call IDs are taken from the selected rows collection, they are in the 
+                        // order they were selected.
+                        // This way they are in the order they appear on screen
+                        var selectedCallIds = from callIdRow in mCallIdDataGridView.Rows.Cast<DataGridViewRow>()
+                                              where callIdRow.Selected
+                                              select callIdRow.Cells[0].Value.ToString();
+
+                        Clipboard.SetText(String.Join(Environment.NewLine, selectedCallIds));
+                    }));
+
+                    contextMenuStrip1.Items.Add(copySelectedCallIds);
+                }
             }
             else
             {
