@@ -19,7 +19,11 @@ namespace CallStateViewer.Parser
 
         private static Regex recordRegex = new Regex(@"^(.+)\|(.+)\|(.+)\|(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}.\d{3})$");
 
-
+        public static void Reset()
+        {
+            callIdsTable.Clear();
+            currentStatesTable.Clear();
+        }
 
         public static List<CallDataRecord> Parse(string filepath)
         {

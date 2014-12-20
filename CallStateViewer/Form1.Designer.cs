@@ -40,8 +40,9 @@
             this.finalFateTimeTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.finalFateTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
-            this.numberOfCallsLoadedStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.timespanOfLoadedCallsStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.progressBar = new System.Windows.Forms.ToolStripProgressBar();
+            this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             ((System.ComponentModel.ISupportInitialize)(this.mDataGridView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mCallIdDataGridView)).BeginInit();
             this.statusStrip1.SuspendLayout();
@@ -145,7 +146,7 @@
             this.callIDTextBoxColumn.HeaderText = "Call ID";
             this.callIDTextBoxColumn.Name = "callIDTextBoxColumn";
             this.callIDTextBoxColumn.ReadOnly = true;
-            this.callIDTextBoxColumn.Width = 63;
+            this.callIDTextBoxColumn.Width = 49;
             // 
             // timeInTextBoxColumn
             // 
@@ -154,7 +155,7 @@
             this.timeInTextBoxColumn.HeaderText = "Time In";
             this.timeInTextBoxColumn.Name = "timeInTextBoxColumn";
             this.timeInTextBoxColumn.ReadOnly = true;
-            this.timeInTextBoxColumn.Width = 67;
+            this.timeInTextBoxColumn.Width = 62;
             // 
             // finalFateTimeTextBoxColumn
             // 
@@ -177,25 +178,33 @@
             // statusStrip1
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.numberOfCallsLoadedStatusLabel,
-            this.timespanOfLoadedCallsStatusLabel});
+            this.statusLabel,
+            this.toolStripStatusLabel1,
+            this.progressBar});
             this.statusStrip1.Location = new System.Drawing.Point(0, 528);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(1163, 22);
             this.statusStrip1.TabIndex = 3;
             this.statusStrip1.Text = "statusStrip1";
             // 
-            // numberOfCallsLoadedStatusLabel
+            // statusLabel
             // 
-            this.numberOfCallsLoadedStatusLabel.Name = "numberOfCallsLoadedStatusLabel";
-            this.numberOfCallsLoadedStatusLabel.Size = new System.Drawing.Size(83, 17);
-            this.numberOfCallsLoadedStatusLabel.Text = "0 Calls Loaded";
+            this.statusLabel.Name = "statusLabel";
+            this.statusLabel.Size = new System.Drawing.Size(232, 17);
+            this.statusLabel.Text = "Drag and drop MainReportLog files to load";
             // 
-            // timespanOfLoadedCallsStatusLabel
+            // progressBar
             // 
-            this.timespanOfLoadedCallsStatusLabel.Name = "timespanOfLoadedCallsStatusLabel";
-            this.timespanOfLoadedCallsStatusLabel.Size = new System.Drawing.Size(83, 17);
-            this.timespanOfLoadedCallsStatusLabel.Text = "Timespan: n/a";
+            this.progressBar.Name = "progressBar";
+            this.progressBar.Size = new System.Drawing.Size(100, 16);
+            this.progressBar.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
+            this.progressBar.Visible = false;
+            // 
+            // toolStripStatusLabel1
+            // 
+            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(783, 17);
+            this.toolStripStatusLabel1.Spring = true;
             // 
             // Form1
             // 
@@ -233,8 +242,9 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn finalFateTimeTextBoxColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn finalFateTextBoxColumn;
         private System.Windows.Forms.StatusStrip statusStrip1;
-        private System.Windows.Forms.ToolStripStatusLabel numberOfCallsLoadedStatusLabel;
-        private System.Windows.Forms.ToolStripStatusLabel timespanOfLoadedCallsStatusLabel;
+        private System.Windows.Forms.ToolStripStatusLabel statusLabel;
+        private System.Windows.Forms.ToolStripProgressBar progressBar;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
     }
 }
 
