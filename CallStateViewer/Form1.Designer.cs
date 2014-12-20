@@ -40,11 +40,11 @@
             this.timeInTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.finalFateTimeTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.finalFateTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.progressBar = new System.Windows.Forms.ToolStripProgressBar();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.progressBar = new System.Windows.Forms.ToolStripProgressBar();
             ((System.ComponentModel.ISupportInitialize)(this.mDataGridView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mCallIdDataGridView)).BeginInit();
             this.statusStrip1.SuspendLayout();
@@ -64,6 +64,7 @@
             this.Column1,
             this.Column2,
             this.Column3});
+            this.mDataGridView.ContextMenuStrip = this.contextMenuStrip;
             this.mDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.mDataGridView.Location = new System.Drawing.Point(248, 0);
             this.mDataGridView.Name = "mDataGridView";
@@ -130,7 +131,7 @@
             this.timeInTextBoxColumn,
             this.finalFateTimeTextBoxColumn,
             this.finalFateTextBoxColumn});
-            this.mCallIdDataGridView.ContextMenuStrip = this.contextMenuStrip1;
+            this.mCallIdDataGridView.ContextMenuStrip = this.contextMenuStrip;
             this.mCallIdDataGridView.Dock = System.Windows.Forms.DockStyle.Left;
             this.mCallIdDataGridView.Location = new System.Drawing.Point(0, 0);
             this.mCallIdDataGridView.Name = "mCallIdDataGridView";
@@ -178,6 +179,12 @@
             this.finalFateTextBoxColumn.ReadOnly = true;
             this.finalFateTextBoxColumn.Width = 76;
             // 
+            // contextMenuStrip
+            // 
+            this.contextMenuStrip.Name = "contextMenuStrip1";
+            this.contextMenuStrip.Size = new System.Drawing.Size(61, 4);
+            this.contextMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip1_Opening);
+            // 
             // statusStrip1
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -196,24 +203,18 @@
             this.statusLabel.Size = new System.Drawing.Size(232, 17);
             this.statusLabel.Text = "Drag and drop MainReportLog files to load";
             // 
+            // toolStripStatusLabel1
+            // 
+            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(916, 17);
+            this.toolStripStatusLabel1.Spring = true;
+            // 
             // progressBar
             // 
             this.progressBar.Name = "progressBar";
             this.progressBar.Size = new System.Drawing.Size(100, 16);
             this.progressBar.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
             this.progressBar.Visible = false;
-            // 
-            // toolStripStatusLabel1
-            // 
-            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(783, 17);
-            this.toolStripStatusLabel1.Spring = true;
-            // 
-            // contextMenuStrip1
-            // 
-            this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(153, 26);
-            this.contextMenuStrip1.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip1_Opening);
             // 
             // Form1
             // 
@@ -254,7 +255,7 @@
         private System.Windows.Forms.ToolStripStatusLabel statusLabel;
         private System.Windows.Forms.ToolStripProgressBar progressBar;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
-        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip;
     }
 }
 

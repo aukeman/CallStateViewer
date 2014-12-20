@@ -46,5 +46,10 @@ namespace CallStateViewer.Model
             get;
             private set;
         }
+
+        public override string ToString()
+        {
+            return String.Format("{0}|{1}|{2}|{3}", this.CallId, this.Name, this.Value, this.Timestamp.ToString("yyyy-MM-dd HH:mm:ss.fff"));
+        }
     }
 }

@@ -188,47 +188,92 @@ namespace CallStateViewer
 
         private void contextMenuStrip1_Opening(object sender, CancelEventArgs e)
         {
-            Point p = mCallIdDataGridView.PointToClient( new Point(MousePosition.X, MousePosition.Y) );
+            Point p = new Point(MousePosition.X, MousePosition.Y);
 
-            contextMenuStrip1.Items.Clear();
-            DataGridView.HitTestInfo hitTestInfo = mCallIdDataGridView.HitTest(p.X, p.Y);
+            Point callIdCoord = mCallIdDataGridView.PointToClient(p);
+            Point logRecordCoord = mDataGridView.PointToClient(p);
 
-            if ( DataGridViewHitTestType.Cell == hitTestInfo.Type )
+            DataGridView.HitTestInfo callIdHitTestInfo = mCallIdDataGridView.HitTest(callIdCoord.X, callIdCoord.Y);
+            DataGridView.HitTestInfo logRecordHitTestInfo = mDataGridView.HitTest(logRecordCoord.X, logRecordCoord.Y);
+
+            if ( DataGridViewHitTestType.Cell == callIdHitTestInfo.Type )
             {
-                var callId = mCallIdDataGridView.Rows[hitTestInfo.RowIndex].Cells[0].Value.ToString();
-                var selectedCallIdRows = mCallIdDataGridView.SelectedRows;
-                
-                var copyCallId = new ToolStripMenuItem(String.Format("Copy \"{0}\" to Clipboard", callId), null, new EventHandler(delegate(object sender2, EventArgs e2)
-                {
-                    Clipboard.SetText(callId);
-                }));
-
-                contextMenuStrip1.Items.Add(copyCallId);
-
-                if ( 0 < selectedCallIdRows.Count )
-                {
-                    var label = 
-                        String.Format("Copy selected Call ID{0} to Clipboard", (1 < selectedCallIdRows.Count ? "s" : ""));
-
-                    var copySelectedCallIds = new ToolStripMenuItem(label, null, new EventHandler(delegate(object sender2, EventArgs e2)
-                    {
-                        // if the call IDs are taken from the selected rows collection, they are in the 
-                        // order they were selected.
-                        // This way they are in the order they appear on screen
-                        var selectedCallIds = from callIdRow in mCallIdDataGridView.Rows.Cast<DataGridViewRow>()
-                                              where callIdRow.Selected
-                                              select callIdRow.Cells[0].Value.ToString();
-
-                        Clipboard.SetText(String.Join(Environment.NewLine, selectedCallIds));
-                    }));
-
-                    contextMenuStrip1.Items.Add(copySelectedCallIds);
-                }
+                BuildCallIdTableContextMenu(callIdHitTestInfo.RowIndex);
+            }
+            else if ( DataGridViewHitTestType.Cell == logRecordHitTestInfo.Type )
+            {
+                BuildLogRecordTableContextMenu(logRecordHitTestInfo.RowIndex);
             }
             else
             {
                 e.Cancel = true;
             }
+        }
+
+        void BuildCallIdTableContextMenu(int rowIndex)
+        {
+            contextMenuStrip.Items.Clear();
+
+            var callId = mCallIdDataGridView.Rows[rowIndex].Cells[0].Value.ToString();
+            contextMenuStrip.Items.Add(BuildCopyCallIdMenuItem(callId));
+
+            var numberOfSelectedRows = mCallIdDataGridView.SelectedRows.Count;
+            if (0 < numberOfSelectedRows)
+            {
+                var label =
+                    String.Format("Copy selected Call ID{0} to Clipboard", (1 < numberOfSelectedRows ? "s" : ""));
+
+                var copySelectedCallIds = new ToolStripMenuItem(label, null, new EventHandler(delegate(object sender2, EventArgs e2)
+                {
+                    // if the call IDs are taken from the selected rows collection, they are in the 
+                    // order they were selected.
+                    // This way they are in the order they appear on screen
+                    var selectedCallIds = from callIdRow in mCallIdDataGridView.Rows.Cast<DataGridViewRow>()
+                                          where callIdRow.Selected
+                                          select callIdRow.Cells[0].Value.ToString();
+
+                    Clipboard.SetText(String.Join(Environment.NewLine, selectedCallIds));
+                }));
+
+                contextMenuStrip.Items.Add(copySelectedCallIds);
+            }
+        }
+
+        void BuildLogRecordTableContextMenu(int rowIndex)
+        {
+            contextMenuStrip.Items.Clear();
+
+            var callId = (mDataGridView.Rows[rowIndex].DataBoundItem as CallDataRecord).CallId;
+            contextMenuStrip.Items.Add(BuildCopyCallIdMenuItem(callId));
+
+            var numberOfSelectedRows = mDataGridView.SelectedRows.Count;
+            if (0 < numberOfSelectedRows)
+            {
+                var label =
+                    String.Format("Copy selected Log Record{0} to Clipboard", (1 < numberOfSelectedRows ? "s" : ""));
+
+                var copySelectedLogRecords = new ToolStripMenuItem(label, null, new EventHandler(delegate(object sender, EventArgs e)
+                {
+                    // if the call IDs are taken from the selected rows collection, they are in the 
+                    // order they were selected.
+                    // This way they are in the order they appear on screen
+                    var selectedLogRecords = from logRow in mDataGridView.Rows.Cast<DataGridViewRow>()
+                                             where logRow.Selected
+                                             select logRow.DataBoundItem.ToString();
+
+                    Clipboard.SetText(String.Join(Environment.NewLine, selectedLogRecords));
+                }));
+
+                contextMenuStrip.Items.Add(copySelectedLogRecords);
+            }
+        }
+
+        ToolStripMenuItem BuildCopyCallIdMenuItem(string callId)
+        {
+            return new ToolStripMenuItem(String.Format("Copy \"{0}\" to Clipboard", callId), null, new EventHandler(delegate(object sender, EventArgs e)
+            {
+                Clipboard.SetText(callId);
+            }));
         }
     }
 }
