@@ -21,11 +21,26 @@ namespace CallStateViewer.Parser
 
         public static void Reset()
         {
+            namesTable.Clear();
             callIdsTable.Clear();
             currentStatesTable.Clear();
         }
 
-        public static List<CallDataRecord> Parse(string filepath)
+        public static List<CallDataRecord> ParseAllFiles(string[] filepaths)
+        {
+            Reset();
+
+            var result = new List<CallDataRecord>();
+
+            foreach (string filepath in filepaths)
+            {
+                result.AddRange( ParseFile(filepath) );
+            }
+
+            return result;
+        }
+
+        public static List<CallDataRecord> ParseFile(string filepath)
         {
             var result = new List<CallDataRecord>();
 
@@ -35,38 +50,11 @@ namespace CallStateViewer.Parser
                 {
                     string line = r.ReadLine();
 
-                    Match m = recordRegex.Match(line);
+                    CallDataRecord cdr = CallDataRecordFromLogString(line);
 
-                    if ( m.Success )
+                    if ( cdr != null )
                     {
-                        string callId = m.Groups[1].Value;
-                        string name = m.Groups[2].Value;
-                        string value = m.Groups[3].Value;
-                        string timestamp = m.Groups[4].Value;
-
-                        string currentState = "";
-
-                        if ( !callIdsTable.ContainsKey(callId) )
-                        {
-                            callIdsTable[callId] = callId;
-                        }
-
-                        if ( !namesTable.ContainsKey(name) )
-                        {
-                            namesTable[name] = name;
-                        }
-
-                        if ( name == "State" )
-                        {
-                            currentStatesTable[callId] = value;
-                        }
-
-                        if ( currentStatesTable.ContainsKey(callId) )
-                        {
-                            currentState = currentStatesTable[callId];
-                        }
-
-                        result.Add( new CallDataRecord(callIdsTable[callId], currentState, namesTable[name], value, DateTime.Parse(timestamp)));
+                        result.Add(cdr);
                     }
                 }
             }
@@ -74,6 +62,51 @@ namespace CallStateViewer.Parser
             return result;
         }
 
-        
+        public static CallDataRecord CallDataRecordFromLogString(string log)
+        {
+            CallDataRecord result = null;
+
+            Match m = recordRegex.Match(log);
+
+            if (m.Success)
+            {
+                string callId = m.Groups[1].Value;
+                string name = m.Groups[2].Value;
+                string value = m.Groups[3].Value;
+                string timestamp = m.Groups[4].Value;
+
+                string currentState = "";
+
+                if (!callIdsTable.ContainsKey(callId))
+                {
+                    callIdsTable[callId] = callId;
+                }
+
+                if (!namesTable.ContainsKey(name))
+                {
+                    namesTable[name] = name;
+                }
+
+                if (name == "State")
+                {
+                    currentStatesTable[callId] = value;
+                }
+
+                if (currentStatesTable.ContainsKey(callId))
+                {
+                    currentState = currentStatesTable[callId];
+                }
+
+                result = new CallDataRecord(callIdsTable[callId], currentState, namesTable[name], value, DateTime.Parse(timestamp));
+            }
+
+            return result;
+        }
+
+        public static string LogStringFromCallDataRecord(CallDataRecord cdr)
+        {
+            return String.Format("{0}|{1}|{2}|{3}", cdr.CallId, cdr.Name, cdr.Value, cdr.Timestamp.ToString("yyyy-MM-dd HH:mm:ss.fff"));
+        }
+
     }
 }

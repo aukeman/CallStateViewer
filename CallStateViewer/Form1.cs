@@ -73,7 +73,7 @@ namespace CallStateViewer
                 {
                     worker.ReportProgress(0, logfile);
 
-                    records.AddRange(MainReportParser.Parse(logfile));
+                    records.AddRange(MainReportParser.ParseFile(logfile));
                 }
 
                 if (0 < records.Count())
@@ -259,7 +259,7 @@ namespace CallStateViewer
                     // This way they are in the order they appear on screen
                     var selectedLogRecords = from logRow in mDataGridView.Rows.Cast<DataGridViewRow>()
                                              where logRow.Selected
-                                             select logRow.DataBoundItem.ToString();
+                                             select MainReportParser.LogStringFromCallDataRecord( logRow.DataBoundItem as CallDataRecord );
 
                     Clipboard.SetText(String.Join(Environment.NewLine, selectedLogRecords));
                 }));
