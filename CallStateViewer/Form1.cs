@@ -185,5 +185,31 @@ namespace CallStateViewer
                 e.Effect = DragDropEffects.Copy;
             }
         }
+
+        private void contextMenuStrip1_Opening(object sender, CancelEventArgs e)
+        {
+            Point p = mCallIdDataGridView.PointToClient( new Point(MousePosition.X, MousePosition.Y) );
+
+            contextMenuStrip1.Items.Clear();
+            DataGridView.HitTestInfo hitTestInfo = mCallIdDataGridView.HitTest(p.X, p.Y);
+
+            if ( DataGridViewHitTestType.Cell == hitTestInfo.Type )
+            {
+                string callId = mCallIdDataGridView.Rows[hitTestInfo.RowIndex].Cells[0].Value.ToString();
+
+                EventHandler handler = delegate(object sender2, EventArgs e2)
+                {
+                    Clipboard.SetText(callId);
+                };
+
+                ToolStripMenuItem copy = new ToolStripMenuItem(String.Format("Copy \"{0}\" to Clipboard", callId), null, handler);
+
+                contextMenuStrip1.Items.Add(copy);
+            }
+            else
+            {
+                e.Cancel = true;
+            }
+        }
     }
 }
