@@ -186,7 +186,7 @@ namespace CallStateViewer
             }
         }
 
-        private void contextMenuStrip1_Opening(object sender, CancelEventArgs e)
+        private void contextMenuStrip_Opening(object sender, CancelEventArgs e)
         {
             Point p = new Point(MousePosition.X, MousePosition.Y);
 
@@ -215,28 +215,29 @@ namespace CallStateViewer
             contextMenuStrip.Items.Clear();
 
             var callId = mCallIdDataGridView.Rows[rowIndex].Cells[0].Value.ToString();
-            contextMenuStrip.Items.Add(BuildCopyCallIdMenuItem(callId));
+            var copyClickedCallId = BuildCopyCallIdMenuItem(callId);
 
             var numberOfSelectedRows = mCallIdDataGridView.SelectedRows.Count;
-            if (0 < numberOfSelectedRows)
+
+            var label =
+                    String.Format("Copy &selected Call ID{0} to Clipboard", (1 < numberOfSelectedRows ? "s" : ""));
+
+            var copySelectedCallIds = new ToolStripMenuItem(label, null, new EventHandler(delegate(object sender2, EventArgs e2)
             {
-                var label =
-                    String.Format("Copy selected Call ID{0} to Clipboard", (1 < numberOfSelectedRows ? "s" : ""));
+                // if the call IDs are taken from the selected rows collection, they are in the 
+                // order they were selected.
+                // This way they are in the order they appear on screen
+                var selectedCallIds = from callIdRow in mCallIdDataGridView.Rows.Cast<DataGridViewRow>()
+                                        where callIdRow.Selected
+                                        select callIdRow.Cells[0].Value.ToString();
 
-                var copySelectedCallIds = new ToolStripMenuItem(label, null, new EventHandler(delegate(object sender2, EventArgs e2)
-                {
-                    // if the call IDs are taken from the selected rows collection, they are in the 
-                    // order they were selected.
-                    // This way they are in the order they appear on screen
-                    var selectedCallIds = from callIdRow in mCallIdDataGridView.Rows.Cast<DataGridViewRow>()
-                                          where callIdRow.Selected
-                                          select callIdRow.Cells[0].Value.ToString();
+                Clipboard.SetText(String.Join(Environment.NewLine, selectedCallIds));
+            }));
 
-                    Clipboard.SetText(String.Join(Environment.NewLine, selectedCallIds));
-                }));
+            copySelectedCallIds.Enabled = (0 < numberOfSelectedRows);
 
-                contextMenuStrip.Items.Add(copySelectedCallIds);
-            }
+            contextMenuStrip.Items.Add(copyClickedCallId);
+            contextMenuStrip.Items.Add(copySelectedCallIds);
         }
 
         void BuildLogRecordTableContextMenu(int rowIndex)
@@ -244,33 +245,43 @@ namespace CallStateViewer
             contextMenuStrip.Items.Clear();
 
             var callId = (mDataGridView.Rows[rowIndex].DataBoundItem as CallDataRecord).CallId;
-            contextMenuStrip.Items.Add(BuildCopyCallIdMenuItem(callId));
+            var copyClickedCallId = BuildCopyCallIdMenuItem(callId);
 
             var numberOfSelectedRows = mDataGridView.SelectedRows.Count;
-            if (0 < numberOfSelectedRows)
+
+            var label =
+                String.Format("Copy &selected Log Record{0} to Clipboard", (1 < numberOfSelectedRows ? "s" : ""));
+
+            var copySelectedLogRecords = new ToolStripMenuItem(label, null, new EventHandler(delegate(object sender, EventArgs e)
             {
-                var label =
-                    String.Format("Copy selected Log Record{0} to Clipboard", (1 < numberOfSelectedRows ? "s" : ""));
+                // if the call IDs are taken from the selected rows collection, they are in the 
+                // order they were selected.
+                // This way they are in the order they appear on screen
+                var selectedLogRecords = from logRow in mDataGridView.Rows.Cast<DataGridViewRow>()
+                                            where logRow.Selected
+                                            select MainReportParser.LogStringFromCallDataRecord( logRow.DataBoundItem as CallDataRecord );
 
-                var copySelectedLogRecords = new ToolStripMenuItem(label, null, new EventHandler(delegate(object sender, EventArgs e)
-                {
-                    // if the call IDs are taken from the selected rows collection, they are in the 
-                    // order they were selected.
-                    // This way they are in the order they appear on screen
-                    var selectedLogRecords = from logRow in mDataGridView.Rows.Cast<DataGridViewRow>()
-                                             where logRow.Selected
-                                             select MainReportParser.LogStringFromCallDataRecord( logRow.DataBoundItem as CallDataRecord );
+                Clipboard.SetText(String.Join(Environment.NewLine, selectedLogRecords));
+            }));
+            copySelectedLogRecords.Enabled = (0 < numberOfSelectedRows);
 
-                    Clipboard.SetText(String.Join(Environment.NewLine, selectedLogRecords));
-                }));
 
-                contextMenuStrip.Items.Add(copySelectedLogRecords);
-            }
+            var copyAllLogRecords = new ToolStripMenuItem("Copy &all Log Records to Clipboard", null, new EventHandler(delegate(object sender, EventArgs e)
+            {
+                var allLogRecords = from logRow in mDataGridView.Rows.Cast<DataGridViewRow>()
+                                    select MainReportParser.LogStringFromCallDataRecord(logRow.DataBoundItem as CallDataRecord);
+
+                Clipboard.SetText(String.Join(Environment.NewLine, allLogRecords));
+            }));
+
+            contextMenuStrip.Items.Add(copyClickedCallId);
+            contextMenuStrip.Items.Add(copySelectedLogRecords);
+            contextMenuStrip.Items.Add(copyAllLogRecords);
         }
 
         ToolStripMenuItem BuildCopyCallIdMenuItem(string callId)
         {
-            return new ToolStripMenuItem(String.Format("Copy \"{0}\" to Clipboard", callId), null, new EventHandler(delegate(object sender, EventArgs e)
+            return new ToolStripMenuItem(String.Format("&Copy \"{0}\" to Clipboard", callId), null, new EventHandler(delegate(object sender, EventArgs e)
             {
                 Clipboard.SetText(callId);
             }));
