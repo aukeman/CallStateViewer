@@ -183,6 +183,17 @@ namespace CallStateViewer
 
                 mDataGridView.Columns[0].Visible = (1 < mCallIdDataGridView.SelectedRows.Count);
 
+                for ( int row_idx = 0; row_idx < mDataGridView.RowCount-1; ++row_idx)
+                {
+                    CallDataRecord thisRow = mDataGridView.Rows[row_idx].DataBoundItem as CallDataRecord;
+                    CallDataRecord nextRow = mDataGridView.Rows[row_idx+1].DataBoundItem as CallDataRecord;
+
+                    if ( thisRow.CallId != nextRow.CallId )
+                    {
+                        mDataGridView.Rows[row_idx].DividerHeight = 3;
+                    }
+                }
+
             }
             else
             {
