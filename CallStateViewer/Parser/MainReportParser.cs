@@ -91,6 +91,11 @@ namespace CallStateViewer.Parser
                 {
                     currentStatesTable[callId] = value;
                 }
+                else if (name == "Restoring Call" && value == "Restoring Call")
+                {
+                    // a call being restored after a restart doesn't have a state yet
+                    currentStatesTable[callId] = "";
+                }
 
                 if (currentStatesTable.ContainsKey(callId))
                 {

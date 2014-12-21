@@ -12,6 +12,8 @@ using System.Text.RegularExpressions;
 
 using System.Threading;
 
+using System.IO;
+
 using CallStateViewer.Parser;
 using CallStateViewer.Model;
 
@@ -56,7 +58,7 @@ namespace CallStateViewer
 
             loadingFiles = true;
 
-            loadedFiles = files;
+            loadedFiles = files.OrderBy(s => s).ToArray();
 
             var callIdsBindingSource = new BindingSource();
             int numberOfCallsLoaded = 0;
@@ -73,19 +75,29 @@ namespace CallStateViewer
                 MainReportParser.Reset();
                 records.Clear();
 
-                foreach (string logfile in files)
+                foreach (string logfile in loadedFiles)
                 {
-                    worker.ReportProgress(0, logfile);
-
-                    records.AddRange(MainReportParser.ParseFile(logfile));
+                    if (File.Exists(logfile))
+                    {
+                        worker.ReportProgress(0, logfile);
+                        records.AddRange(MainReportParser.ParseFile(logfile));
+                    } 
+                    else if (Directory.Exists(logfile))
+                    {
+                        foreach (string containedLogFile in Directory.EnumerateFiles(logfile, "MainReportLog_*.txt", SearchOption.AllDirectories))
+                        {
+                            worker.ReportProgress(0, containedLogFile);
+                            records.AddRange(MainReportParser.ParseFile(containedLogFile));
+                        }
+                    }
                 }
 
                 if (0 < records.Count())
                 {
                     var callIds = from record in records
                                   group record by record.CallId into g
-                                  let newCall = g.SingleOrDefault(c => c.Name == "New Call")
-                                  let finalState = g.SingleOrDefault(c => c.Name == "Final State")
+                                  let newCall = g.FirstOrDefault(c => c.Name == "New Call")
+                                  let finalState = g.FirstOrDefault(c => c.Name == "Final State")
                                   select new
                                   {
                                       CallId = g.Key,
@@ -156,9 +168,9 @@ namespace CallStateViewer
                 var callIds = from DataGridViewRow row in mCallIdDataGridView.SelectedRows
                               select row.Cells[0].Value.ToString();
 
-                var callEvents = from record in records
-                                 where callIds.Contains(record.CallId)
-                                 select record;
+                var callEvents = (from record in records
+                                  where callIds.Contains(record.CallId)
+                                  select record).Distinct();
 
                 var callEventsBindingSource = new BindingSource();
                 callEventsBindingSource.DataSource = callEvents;

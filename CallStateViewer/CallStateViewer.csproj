@@ -51,6 +51,7 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="Model\CallDataRecord.cs" />
+    <Compile Include="Model\CallDataRecordEqualityComparer.cs" />
     <Compile Include="Parser\MainReportParser.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
