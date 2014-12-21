@@ -24,6 +24,8 @@ namespace CallStateViewer
 
         bool loadingFiles = false;
 
+        string[] loadedFiles = {};
+
         public Form1()
         {
             InitializeComponent();
@@ -53,6 +55,8 @@ namespace CallStateViewer
             }
 
             loadingFiles = true;
+
+            loadedFiles = files;
 
             var callIdsBindingSource = new BindingSource();
             int numberOfCallsLoaded = 0;
@@ -196,6 +200,8 @@ namespace CallStateViewer
             DataGridView.HitTestInfo callIdHitTestInfo = mCallIdDataGridView.HitTest(callIdCoord.X, callIdCoord.Y);
             DataGridView.HitTestInfo logRecordHitTestInfo = mDataGridView.HitTest(logRecordCoord.X, logRecordCoord.Y);
 
+            e.Cancel = false;
+
             if ( DataGridViewHitTestType.Cell == callIdHitTestInfo.Type )
             {
                 BuildCallIdTableContextMenu(callIdHitTestInfo.RowIndex);
@@ -236,8 +242,12 @@ namespace CallStateViewer
 
             copySelectedCallIds.Enabled = (0 < numberOfSelectedRows);
 
+            var reload = BuildReloadMenuItem();
+
             contextMenuStrip.Items.Add(copyClickedCallId);
             contextMenuStrip.Items.Add(copySelectedCallIds);
+            contextMenuStrip.Items.Add(new ToolStripSeparator());
+            contextMenuStrip.Items.Add(reload);
         }
 
         void BuildLogRecordTableContextMenu(int rowIndex)
@@ -274,9 +284,13 @@ namespace CallStateViewer
                 Clipboard.SetText(String.Join(Environment.NewLine, allLogRecords));
             }));
 
+            var reload = BuildReloadMenuItem();
+
             contextMenuStrip.Items.Add(copyClickedCallId);
             contextMenuStrip.Items.Add(copySelectedLogRecords);
             contextMenuStrip.Items.Add(copyAllLogRecords);
+            contextMenuStrip.Items.Add((new ToolStripSeparator()));
+            contextMenuStrip.Items.Add(reload);
         }
 
         ToolStripMenuItem BuildCopyCallIdMenuItem(string callId)
@@ -285,6 +299,18 @@ namespace CallStateViewer
             {
                 Clipboard.SetText(callId);
             }));
+        }
+
+        ToolStripMenuItem BuildReloadMenuItem()
+        {
+            var result = new ToolStripMenuItem("&Reload", null, new EventHandler(delegate(object sender, EventArgs e)
+            {
+                LoadFiles(this.loadedFiles);
+            }));
+
+            result.Enabled = !loadingFiles;
+
+            return result;
         }
     }
 }
