@@ -58,6 +58,9 @@ namespace CallStateViewer
 
             loadingFiles = true;
 
+            // ensure the logfiles are read in alphabetical order
+            // we are assuming this correlates with the logfiles 
+            // being in the correct time order
             loadedFiles = files.OrderBy(s => s).ToArray();
 
             var callIdsBindingSource = new BindingSource();
@@ -98,12 +101,14 @@ namespace CallStateViewer
                                   group record by record.CallId into g
                                   let newCall = g.FirstOrDefault(c => c.Name == "New Call")
                                   let finalState = g.FirstOrDefault(c => c.Name == "Final State")
+                                  let callbackAttempts = g.Where(c => c.Name == "Callback Attempts").Distinct().Count()
                                   select new
                                   {
                                       CallId = g.Key,
                                       TimeIn = (newCall != null ? newCall.Timestamp : DateTime.MinValue),
                                       FinalFateTime = (finalState != null ? finalState.Timestamp : DateTime.MinValue),
-                                      FinalFate = (finalState != null ? finalState.Value : "")
+                                      FinalFate = (finalState != null ? finalState.Value : ""),
+                                      CallbackAttempts = (callbackAttempts == 0 ? "" : callbackAttempts.ToString())
                                   };
 
                     callIdsBindingSource.DataSource = callIds;
@@ -122,12 +127,12 @@ namespace CallStateViewer
                 var latestTimestamp = records.Max(record => record.Timestamp);
 
 
-                mCallIdDataGridView.Columns[3].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+                mCallIdDataGridView.Columns[4].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
 
                 mCallIdDataGridView.DataSource = callIdsBindingSource;
 
                 mCallIdDataGridView.Width = mCallIdDataGridView.PreferredSize.Width;
-                mCallIdDataGridView.Columns[3].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                mCallIdDataGridView.Columns[4].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
 
                 statusLabel.Text = String.Format("{0} Calls Loaded   {1} - {2}", numberOfCallsLoaded, earliestTimestamp, latestTimestamp);
                 
@@ -156,7 +161,7 @@ namespace CallStateViewer
                 }
                 else
                 {
-                    e.Value = ((DateTime)e.Value).ToString("HH:mm:ss.fff");
+                    e.Value = ((DateTime)e.Value).ToString("MM/dd HH:mm:ss.fff");
                 }
             }
         }

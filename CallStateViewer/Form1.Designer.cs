@@ -35,16 +35,17 @@
             this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.mCallIdDataGridView = new System.Windows.Forms.DataGridView();
-            this.callIDTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.timeInTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.finalFateTimeTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.finalFateTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.mCallIdDataGridView = new System.Windows.Forms.DataGridView();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.progressBar = new System.Windows.Forms.ToolStripProgressBar();
+            this.callIDTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.timeInTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.finalFateTimeTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.finalFateTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.mDataGridView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mCallIdDataGridView)).BeginInit();
             this.statusStrip1.SuspendLayout();
@@ -66,12 +67,12 @@
             this.Column3});
             this.mDataGridView.ContextMenuStrip = this.contextMenuStrip;
             this.mDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.mDataGridView.Location = new System.Drawing.Point(248, 0);
+            this.mDataGridView.Location = new System.Drawing.Point(394, 0);
             this.mDataGridView.Name = "mDataGridView";
             this.mDataGridView.ReadOnly = true;
             this.mDataGridView.RowHeadersVisible = false;
             this.mDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.mDataGridView.Size = new System.Drawing.Size(915, 528);
+            this.mDataGridView.Size = new System.Drawing.Size(888, 528);
             this.mDataGridView.TabIndex = 1;
             this.mDataGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.mDataGridView_CellFormatting);
             // 
@@ -119,6 +120,12 @@
             this.Column3.Name = "Column3";
             this.Column3.ReadOnly = true;
             // 
+            // contextMenuStrip
+            // 
+            this.contextMenuStrip.Name = "contextMenuStrip1";
+            this.contextMenuStrip.Size = new System.Drawing.Size(61, 4);
+            this.contextMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip_Opening);
+            // 
             // mCallIdDataGridView
             // 
             this.mCallIdDataGridView.AllowUserToAddRows = false;
@@ -130,7 +137,8 @@
             this.callIDTextBoxColumn,
             this.timeInTextBoxColumn,
             this.finalFateTimeTextBoxColumn,
-            this.finalFateTextBoxColumn});
+            this.finalFateTextBoxColumn,
+            this.Column6});
             this.mCallIdDataGridView.ContextMenuStrip = this.contextMenuStrip;
             this.mCallIdDataGridView.Dock = System.Windows.Forms.DockStyle.Left;
             this.mCallIdDataGridView.Location = new System.Drawing.Point(0, 0);
@@ -138,10 +146,41 @@
             this.mCallIdDataGridView.ReadOnly = true;
             this.mCallIdDataGridView.RowHeadersVisible = false;
             this.mCallIdDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.mCallIdDataGridView.Size = new System.Drawing.Size(248, 528);
+            this.mCallIdDataGridView.Size = new System.Drawing.Size(394, 528);
             this.mCallIdDataGridView.TabIndex = 0;
             this.mCallIdDataGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.mDataGridView_CellFormatting);
             this.mCallIdDataGridView.SelectionChanged += new System.EventHandler(this.mCallIdDataGridView_SelectionChanged);
+            // 
+            // statusStrip1
+            // 
+            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.statusLabel,
+            this.toolStripStatusLabel1,
+            this.progressBar});
+            this.statusStrip1.Location = new System.Drawing.Point(0, 528);
+            this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.Size = new System.Drawing.Size(1282, 22);
+            this.statusStrip1.TabIndex = 3;
+            this.statusStrip1.Text = "statusStrip1";
+            // 
+            // statusLabel
+            // 
+            this.statusLabel.Name = "statusLabel";
+            this.statusLabel.Size = new System.Drawing.Size(232, 17);
+            this.statusLabel.Text = "Drag and drop MainReportLog files to load";
+            // 
+            // toolStripStatusLabel1
+            // 
+            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(1035, 17);
+            this.toolStripStatusLabel1.Spring = true;
+            // 
+            // progressBar
+            // 
+            this.progressBar.Name = "progressBar";
+            this.progressBar.Size = new System.Drawing.Size(100, 16);
+            this.progressBar.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
+            this.progressBar.Visible = false;
             // 
             // callIDTextBoxColumn
             // 
@@ -150,7 +189,7 @@
             this.callIDTextBoxColumn.HeaderText = "Call ID";
             this.callIDTextBoxColumn.Name = "callIDTextBoxColumn";
             this.callIDTextBoxColumn.ReadOnly = true;
-            this.callIDTextBoxColumn.Width = 49;
+            this.callIDTextBoxColumn.Width = 63;
             // 
             // timeInTextBoxColumn
             // 
@@ -159,13 +198,13 @@
             this.timeInTextBoxColumn.HeaderText = "Time In";
             this.timeInTextBoxColumn.Name = "timeInTextBoxColumn";
             this.timeInTextBoxColumn.ReadOnly = true;
-            this.timeInTextBoxColumn.Width = 62;
+            this.timeInTextBoxColumn.Width = 67;
             // 
             // finalFateTimeTextBoxColumn
             // 
             this.finalFateTimeTextBoxColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
             this.finalFateTimeTextBoxColumn.DataPropertyName = "FinalFateTime";
-            this.finalFateTimeTextBoxColumn.HeaderText = "Final Fate Time";
+            this.finalFateTimeTextBoxColumn.HeaderText = "Final Sate Time";
             this.finalFateTimeTextBoxColumn.Name = "finalFateTimeTextBoxColumn";
             this.finalFateTimeTextBoxColumn.ReadOnly = true;
             this.finalFateTimeTextBoxColumn.Width = 96;
@@ -179,49 +218,20 @@
             this.finalFateTextBoxColumn.ReadOnly = true;
             this.finalFateTextBoxColumn.Width = 76;
             // 
-            // contextMenuStrip
+            // Column6
             // 
-            this.contextMenuStrip.Name = "contextMenuStrip1";
-            this.contextMenuStrip.Size = new System.Drawing.Size(61, 4);
-            this.contextMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip_Opening);
-            // 
-            // statusStrip1
-            // 
-            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.statusLabel,
-            this.toolStripStatusLabel1,
-            this.progressBar});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 528);
-            this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(1163, 22);
-            this.statusStrip1.TabIndex = 3;
-            this.statusStrip1.Text = "statusStrip1";
-            // 
-            // statusLabel
-            // 
-            this.statusLabel.Name = "statusLabel";
-            this.statusLabel.Size = new System.Drawing.Size(232, 17);
-            this.statusLabel.Text = "Drag and drop MainReportLog files to load";
-            // 
-            // toolStripStatusLabel1
-            // 
-            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(916, 17);
-            this.toolStripStatusLabel1.Spring = true;
-            // 
-            // progressBar
-            // 
-            this.progressBar.Name = "progressBar";
-            this.progressBar.Size = new System.Drawing.Size(100, 16);
-            this.progressBar.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
-            this.progressBar.Visible = false;
+            this.Column6.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.Column6.DataPropertyName = "CallbackAttempts";
+            this.Column6.HeaderText = "CBs";
+            this.Column6.Name = "Column6";
+            this.Column6.ReadOnly = true;
             // 
             // Form1
             // 
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1163, 550);
+            this.ClientSize = new System.Drawing.Size(1282, 550);
             this.Controls.Add(this.mDataGridView);
             this.Controls.Add(this.mCallIdDataGridView);
             this.Controls.Add(this.statusStrip1);
@@ -247,15 +257,16 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn Column1;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column2;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column3;
-        private System.Windows.Forms.DataGridViewTextBoxColumn callIDTextBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn timeInTextBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn finalFateTimeTextBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn finalFateTextBoxColumn;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel statusLabel;
         private System.Windows.Forms.ToolStripProgressBar progressBar;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip;
+        private System.Windows.Forms.DataGridViewTextBoxColumn callIDTextBoxColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn timeInTextBoxColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn finalFateTimeTextBoxColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn finalFateTextBoxColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column6;
     }
 }
 
