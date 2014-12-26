@@ -42,8 +42,7 @@ namespace CallStateViewer
 
             summaryFilterDialog.FilterUpdated += new EventHandler(delegate(object sender, EventArgs e)
             {
-                var callSummary = BuildCallSummaryTable();
-                DisplayCallSummaryTable(callSummary);
+                DisplayCallSummaryTable();
             });
         }
 
@@ -118,8 +117,68 @@ namespace CallStateViewer
 
             worker.RunWorkerCompleted += delegate(object sender, RunWorkerCompletedEventArgs e)
             {
-                DisplayCallSummaryTable(callSummaryList);
-                
+                loadingFiles = false;
+                DisplayCallSummaryTable();
+            };
+
+            worker.RunWorkerAsync();
+        }
+
+        private void DisplayCallSummaryTable()
+        {
+
+            if (loadingFiles)
+            {
+                return;
+            }
+
+            BackgroundWorker worker = new BackgroundWorker();
+
+            var callIdsBindingSource = new BindingSource();
+
+            string statusLabelText = "";
+
+            loadingFiles = true;
+            progressBar.Visible = true;
+            this.Cursor = Cursors.WaitCursor;
+            statusLabel.Text = "Building Call Summary Table...";
+
+            worker.DoWork += delegate(object sender, DoWorkEventArgs e)
+            {
+                var callSummaryList = BuildCallSummaryTable();
+
+                if (0 < callSummaryList.Count())
+                {
+                    callIdsBindingSource.DataSource = callSummaryList;
+                    int numberOfCallsLoaded = callSummaryList.Count();
+
+                    //var callIdsInCallSummary = callSummaryList.Select(summary => summary.CallId);
+                    //var callRecordsRepresentedByCallSummary = records.Where(record => callIdsInCallSummary.Contains(record.CallId));
+
+                    //var earliestTimestamp = callRecordsRepresentedByCallSummary.Min(record => record.Timestamp);
+                    //var latestTimestamp = callRecordsRepresentedByCallSummary.Max(record => record.Timestamp);
+
+                    //statusLabelText = String.Format("{0} Calls Loaded   {1} - {2}", numberOfCallsLoaded, earliestTimestamp, latestTimestamp);
+                    statusLabelText = String.Format("{0} Calls Loaded", numberOfCallsLoaded);
+                }
+                else
+                {
+                    statusLabelText = "No Calls Loaded";
+                }
+            };
+
+            worker.RunWorkerCompleted += delegate(object sender, RunWorkerCompletedEventArgs e)
+            {
+                mCallIdDataGridView.Columns[4].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+
+                mCallIdDataGridView.DataSource = callIdsBindingSource;
+
+                mCallIdDataGridView.Width = mCallIdDataGridView.PreferredSize.Width;
+                mCallIdDataGridView.Columns[4].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+
+                statusLabel.Text = statusLabelText;
+
+
                 loadingFiles = false;
                 progressBar.Visible = false;
                 this.Cursor = Cursors.Default;
@@ -131,43 +190,20 @@ namespace CallStateViewer
         private IEnumerable<CallSummary> BuildCallSummaryTable()
         {
             var callSummary = from record in records
-                                group record by record.CallId into g
-                                let newCall = g.FirstOrDefault(c => c.Name == "New Call")
-                                let finalState = g.FirstOrDefault(c => c.Name == "Final State")
-                                let callbackAttempts = g.Where(c => c.Name == "Callback Attempts").Distinct().Count()
-                                select new CallSummary()
-                                {
-                                    CallId = g.Key,
-                                    TimeIn = (newCall != null ? newCall.Timestamp : DateTime.MinValue),
-                                    FinalStateTime = (finalState != null ? finalState.Timestamp : DateTime.MinValue),
-                                    FinalState = (finalState != null ? finalState.Value : ""),
-                                    CallbackAttempts = (callbackAttempts == 0 ? "" : callbackAttempts.ToString())
-                                };
+                              group record by record.CallId into g
+                              let newCall = g.FirstOrDefault(c => c.Name == "New Call")
+                              let finalState = g.FirstOrDefault(c => c.Name == "Final State")
+                              let callbackAttempts = g.Where(c => c.Name == "Callback Attempts").Distinct().Count()
+                              select new CallSummary()
+                              {
+                                  CallId = g.Key,
+                                  TimeIn = (newCall != null ? newCall.Timestamp : DateTime.MinValue),
+                                  FinalStateTime = (finalState != null ? finalState.Timestamp : DateTime.MinValue),
+                                  FinalState = (finalState != null ? finalState.Value : ""),
+                                  CallbackAttempts = (callbackAttempts == 0 ? "" : callbackAttempts.ToString())
+                              };
 
             return callSummary.Where(c => summaryFilterDialog.Filter.Passes(c));
-        }
-
-        private void DisplayCallSummaryTable(IEnumerable<CallSummary> callSummaryList)
-        {
-            var callIdsBindingSource = new BindingSource();
-
-            callIdsBindingSource.DataSource = callSummaryList;
-            int numberOfCallsLoaded = callSummaryList.Count();
-
-            var callIdsInCallSummary = callSummaryList.Select(summary => summary.CallId);
-            var callRecordsRepresentedByCallSummary = records.Where(record => callIdsInCallSummary.Contains(record.CallId));
-
-            var earliestTimestamp = callRecordsRepresentedByCallSummary.Min(record => record.Timestamp);
-            var latestTimestamp = callRecordsRepresentedByCallSummary.Max(record => record.Timestamp);
-
-            mCallIdDataGridView.Columns[4].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-
-            mCallIdDataGridView.DataSource = callIdsBindingSource;
-
-            mCallIdDataGridView.Width = mCallIdDataGridView.PreferredSize.Width;
-            mCallIdDataGridView.Columns[4].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-
-            statusLabel.Text = String.Format("{0} Calls Loaded   {1} - {2}", numberOfCallsLoaded, earliestTimestamp, latestTimestamp);
         }
 
         private void mDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
@@ -178,7 +214,7 @@ namespace CallStateViewer
 
             if ( propertyName.Equals("Timestamp") ||
                  propertyName.Equals("TimeIn") ||
-                 propertyName.Equals("FinalFateTime") )
+                 propertyName.Equals("FinalStateTime") )
             {
                 if (e.Value == null ||
                     ((DateTime)e.Value) == DateTime.MinValue)
