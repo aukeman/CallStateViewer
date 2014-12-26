@@ -44,17 +44,25 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Form1.cs">
+    <Compile Include="Model\CallSummary.cs" />
+    <Compile Include="View\SummaryFilter.cs" />
+    <Compile Include="View\Form1.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form1.Designer.cs">
+    <Compile Include="View\Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="Model\CallDataRecord.cs" />
     <Compile Include="Parser\MainReportParser.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="Form1.resx">
+    <Compile Include="View\SummaryFilterDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\SummaryFilterDialog.Designer.cs">
+      <DependentUpon>SummaryFilterDialog.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="View\Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -66,6 +74,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="View\SummaryFilterDialog.resx">
+      <DependentUpon>SummaryFilterDialog.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="Properties\DataSources\CallStateViewer.Model.CallDataRecord.datasource" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
