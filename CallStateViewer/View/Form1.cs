@@ -155,11 +155,10 @@ namespace CallStateViewer
                     //var callIdsInCallSummary = callSummaryList.Select(summary => summary.CallId);
                     //var callRecordsRepresentedByCallSummary = records.Where(record => callIdsInCallSummary.Contains(record.CallId));
 
-                    //var earliestTimestamp = callRecordsRepresentedByCallSummary.Min(record => record.Timestamp);
-                    //var latestTimestamp = callRecordsRepresentedByCallSummary.Max(record => record.Timestamp);
+                    var earliestTimestamp = callSummaryList.Min(summary => summary.EarliestRecordTimestamp);
+                    var latestTimestamp = callSummaryList.Max(summary => summary.EarliestRecordTimestamp); 
 
-                    //statusLabelText = String.Format("{0} Calls Loaded   {1} - {2}", numberOfCallsLoaded, earliestTimestamp, latestTimestamp);
-                    statusLabelText = String.Format("{0} Calls Loaded", numberOfCallsLoaded);
+                    statusLabelText = String.Format("{0} Calls Loaded   {1} - {2}", numberOfCallsLoaded, earliestTimestamp, latestTimestamp);
                 }
                 else
                 {
@@ -194,13 +193,17 @@ namespace CallStateViewer
                               let newCall = g.FirstOrDefault(c => c.Name == "New Call")
                               let finalState = g.FirstOrDefault(c => c.Name == "Final State")
                               let callbackAttempts = g.Where(c => c.Name == "Callback Attempts").Distinct().Count()
+                              let earliestRecordTimestamp = g.Min(c => c.Timestamp)
+                              let latestRecordTimestamp = g.Max(c => c.Timestamp)
                               select new CallSummary()
                               {
                                   CallId = g.Key,
                                   TimeIn = (newCall != null ? newCall.Timestamp : DateTime.MinValue),
                                   FinalStateTime = (finalState != null ? finalState.Timestamp : DateTime.MinValue),
                                   FinalState = (finalState != null ? finalState.Value : ""),
-                                  CallbackAttempts = (callbackAttempts == 0 ? "" : callbackAttempts.ToString())
+                                  CallbackAttempts = (callbackAttempts == 0 ? "" : callbackAttempts.ToString()),
+                                  EarliestRecordTimestamp = earliestRecordTimestamp,
+                                  LatestRecordTimestamp = latestRecordTimestamp
                               };
 
             return callSummary.Where(c => summaryFilterDialog.Filter.Passes(c));

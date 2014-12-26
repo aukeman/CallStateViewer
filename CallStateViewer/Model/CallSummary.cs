@@ -37,5 +37,17 @@ namespace CallStateViewer.Model
             get;
             set;
         }
+
+        public DateTime EarliestRecordTimestamp
+        {
+            get;
+            set;
+        }
+
+        public DateTime LatestRecordTimestamp
+        {
+            get;
+            set;
+        }
     }
 }
