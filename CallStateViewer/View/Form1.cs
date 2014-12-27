@@ -25,8 +25,6 @@ namespace CallStateViewer
 
         private List<CallDataRecord> records = new List<CallDataRecord>();
 
-        bool loadingFiles = false;
-
         string[] loadedFiles = {};
 
         SummaryFilterDialog summaryFilterDialog = new SummaryFilterDialog();
@@ -46,6 +44,18 @@ namespace CallStateViewer
             });
         }
 
+        private bool busy = false;
+        public bool Busy
+        {
+            get { return this.busy; }
+            private set
+            {
+                this.busy = value;
+                this.progressBar.Visible = value;
+                this.UseWaitCursor = value;
+            }
+        }
+
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
@@ -61,12 +71,12 @@ namespace CallStateViewer
 
         private void LoadFiles( string[] files )
         {
-            if ( loadingFiles )
+            if ( this.Busy )
             {
                 return;
             }
 
-            loadingFiles = true;
+            this.Busy = true;
 
             // ensure the logfiles are read in alphabetical order
             // we are assuming this correlates with the logfiles 
@@ -75,10 +85,6 @@ namespace CallStateViewer
 
             BackgroundWorker worker = new BackgroundWorker();
             worker.WorkerReportsProgress = true;
-
-            progressBar.Visible = true;
-
-            this.Cursor = Cursors.WaitCursor;
 
             IEnumerable<CallSummary> callSummaryList = null;
 
@@ -117,7 +123,7 @@ namespace CallStateViewer
 
             worker.RunWorkerCompleted += delegate(object sender, RunWorkerCompletedEventArgs e)
             {
-                loadingFiles = false;
+                this.Busy = false;
                 DisplayCallSummaryTable();
             };
 
@@ -127,22 +133,20 @@ namespace CallStateViewer
         private void DisplayCallSummaryTable()
         {
 
-            if (loadingFiles)
+            if ( this.Busy )
             {
                 return;
             }
 
-            BackgroundWorker worker = new BackgroundWorker();
+            this.Busy = true;
 
-            var callIdsBindingSource = new BindingSource();
-
-            string statusLabelText = "";
-
-            loadingFiles = true;
-            progressBar.Visible = true;
-            this.Cursor = Cursors.WaitCursor;
             statusLabel.Text = "Building Call Summary Table...";
 
+            var callIdsBindingSource = new BindingSource();
+            string statusLabelText = "";
+
+
+            BackgroundWorker worker = new BackgroundWorker();
             worker.DoWork += delegate(object sender, DoWorkEventArgs e)
             {
                 var callSummaryList = BuildCallSummaryTable();
@@ -150,13 +154,10 @@ namespace CallStateViewer
                 if (0 < callSummaryList.Count())
                 {
                     callIdsBindingSource.DataSource = callSummaryList;
+
                     int numberOfCallsLoaded = callSummaryList.Count();
-
-                    //var callIdsInCallSummary = callSummaryList.Select(summary => summary.CallId);
-                    //var callRecordsRepresentedByCallSummary = records.Where(record => callIdsInCallSummary.Contains(record.CallId));
-
                     var earliestTimestamp = callSummaryList.Min(summary => summary.EarliestRecordTimestamp);
-                    var latestTimestamp = callSummaryList.Max(summary => summary.EarliestRecordTimestamp); 
+                    var latestTimestamp = callSummaryList.Max(summary => summary.LatestRecordTimestamp); 
 
                     statusLabelText = String.Format("{0} Calls Loaded   {1} - {2}", numberOfCallsLoaded, earliestTimestamp, latestTimestamp);
                 }
@@ -177,10 +178,7 @@ namespace CallStateViewer
 
                 statusLabel.Text = statusLabelText;
 
-
-                loadingFiles = false;
-                progressBar.Visible = false;
-                this.Cursor = Cursors.Default;
+                this.Busy = false;
             };
 
             worker.RunWorkerAsync();
@@ -269,7 +267,7 @@ namespace CallStateViewer
 
         private void Form1_DragDrop(object sender, DragEventArgs e)
         {
-            if (!loadingFiles && e.Data.GetDataPresent(DataFormats.FileDrop))
+            if (!this.Busy && e.Data.GetDataPresent(DataFormats.FileDrop))
             {
                 LoadFiles(e.Data.GetData(DataFormats.FileDrop) as string[]);
             }
@@ -277,7 +275,7 @@ namespace CallStateViewer
 
         private void Form1_DragEnter(object sender, DragEventArgs e)
         {
-            if ( !loadingFiles && e.Data.GetDataPresent(DataFormats.FileDrop))
+            if ( !this.Busy && e.Data.GetDataPresent(DataFormats.FileDrop))
             {
                 e.Effect = DragDropEffects.Copy;
             }
@@ -409,7 +407,7 @@ namespace CallStateViewer
                 LoadFiles(this.loadedFiles);
             }));
 
-            result.Enabled = !loadingFiles;
+            result.Enabled = !this.Busy;
 
             return result;
         }
