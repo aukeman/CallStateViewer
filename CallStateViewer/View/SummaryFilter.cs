@@ -14,7 +14,8 @@ namespace CallStateViewer.View
     {
         public bool Passes(CallSummary callSummary)
         {
-            return (FinalStateFilter == "" || Regex.Match(callSummary.FinalState, FinalStateFilter).Success);
+            return ((CallIdFilter == "" || Regex.Match(callSummary.CallId, CallIdFilter).Success) &&
+                    (FinalStateFilter == "" || Regex.Match(callSummary.FinalState, FinalStateFilter).Success));
         }
 
         public string CallIdFilter
@@ -23,13 +24,37 @@ namespace CallStateViewer.View
             set;
         }
 
-        public string TimeInFilter
+        public DateTime TimeInAfterFilter
         {
             get;
             set;
         }
 
-        public string FinalStateTimeFilter
+        public DateTime TimeInBeforeFilter
+        {
+            get;
+            set;
+        }
+
+        public bool TimeInEmptyFilter
+        {
+            get;
+            set;
+        }
+
+        public DateTime FinalStateTimeAfterFilter
+        {
+            get;
+            set;
+        }
+
+        public DateTime FinalStateTimeBeforeFilter
+        {
+            get;
+            set;
+        }
+
+        public bool FinalStateTimeEmptyFilter
         {
             get;
             set;
@@ -41,7 +66,13 @@ namespace CallStateViewer.View
             set;
         }
 
-        public string CallbackAttemptsFilter
+        public int CallbackAttemptsMinFilter
+        {
+            get;
+            set;
+        }
+
+        public int CallbackAttemptsMaxFilter
         {
             get;
             set;

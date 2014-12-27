@@ -37,15 +37,15 @@
             this.Column3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.mCallIdDataGridView = new System.Windows.Forms.DataGridView();
-            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
-            this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.progressBar = new System.Windows.Forms.ToolStripProgressBar();
             this.callIDTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.timeInTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.finalFateTimeTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.finalFateTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.progressBar = new System.Windows.Forms.ToolStripProgressBar();
             ((System.ComponentModel.ISupportInitialize)(this.mDataGridView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mCallIdDataGridView)).BeginInit();
             this.statusStrip1.SuspendLayout();
@@ -151,6 +151,50 @@
             this.mCallIdDataGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.mDataGridView_CellFormatting);
             this.mCallIdDataGridView.SelectionChanged += new System.EventHandler(this.mCallIdDataGridView_SelectionChanged);
             // 
+            // callIDTextBoxColumn
+            // 
+            this.callIDTextBoxColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.callIDTextBoxColumn.DataPropertyName = "CallId";
+            this.callIDTextBoxColumn.HeaderText = "Call ID";
+            this.callIDTextBoxColumn.Name = "callIDTextBoxColumn";
+            this.callIDTextBoxColumn.ReadOnly = true;
+            this.callIDTextBoxColumn.Width = 49;
+            // 
+            // timeInTextBoxColumn
+            // 
+            this.timeInTextBoxColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.timeInTextBoxColumn.DataPropertyName = "TimeIn";
+            this.timeInTextBoxColumn.HeaderText = "Time In";
+            this.timeInTextBoxColumn.Name = "timeInTextBoxColumn";
+            this.timeInTextBoxColumn.ReadOnly = true;
+            this.timeInTextBoxColumn.Width = 62;
+            // 
+            // finalFateTimeTextBoxColumn
+            // 
+            this.finalFateTimeTextBoxColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.finalFateTimeTextBoxColumn.DataPropertyName = "FinalStateTime";
+            this.finalFateTimeTextBoxColumn.HeaderText = "Final State Time";
+            this.finalFateTimeTextBoxColumn.Name = "finalFateTimeTextBoxColumn";
+            this.finalFateTimeTextBoxColumn.ReadOnly = true;
+            this.finalFateTimeTextBoxColumn.Width = 99;
+            // 
+            // finalFateTextBoxColumn
+            // 
+            this.finalFateTextBoxColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.finalFateTextBoxColumn.DataPropertyName = "FinalState";
+            this.finalFateTextBoxColumn.HeaderText = "Final State";
+            this.finalFateTextBoxColumn.Name = "finalFateTextBoxColumn";
+            this.finalFateTextBoxColumn.ReadOnly = true;
+            this.finalFateTextBoxColumn.Width = 76;
+            // 
+            // Column6
+            // 
+            this.Column6.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.Column6.DataPropertyName = "CallbackAttempts";
+            this.Column6.HeaderText = "CBs";
+            this.Column6.Name = "Column6";
+            this.Column6.ReadOnly = true;
+            // 
             // statusStrip1
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -181,50 +225,6 @@
             this.progressBar.Size = new System.Drawing.Size(100, 16);
             this.progressBar.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
             this.progressBar.Visible = false;
-            // 
-            // callIDTextBoxColumn
-            // 
-            this.callIDTextBoxColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-            this.callIDTextBoxColumn.DataPropertyName = "CallId";
-            this.callIDTextBoxColumn.HeaderText = "Call ID";
-            this.callIDTextBoxColumn.Name = "callIDTextBoxColumn";
-            this.callIDTextBoxColumn.ReadOnly = true;
-            this.callIDTextBoxColumn.Width = 63;
-            // 
-            // timeInTextBoxColumn
-            // 
-            this.timeInTextBoxColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-            this.timeInTextBoxColumn.DataPropertyName = "TimeIn";
-            this.timeInTextBoxColumn.HeaderText = "Time In";
-            this.timeInTextBoxColumn.Name = "timeInTextBoxColumn";
-            this.timeInTextBoxColumn.ReadOnly = true;
-            this.timeInTextBoxColumn.Width = 67;
-            // 
-            // finalFateTimeTextBoxColumn
-            // 
-            this.finalFateTimeTextBoxColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-            this.finalFateTimeTextBoxColumn.DataPropertyName = "FinalStateTime";
-            this.finalFateTimeTextBoxColumn.HeaderText = "Final State Time";
-            this.finalFateTimeTextBoxColumn.Name = "finalFateTimeTextBoxColumn";
-            this.finalFateTimeTextBoxColumn.ReadOnly = true;
-            this.finalFateTimeTextBoxColumn.Width = 99;
-            // 
-            // finalFateTextBoxColumn
-            // 
-            this.finalFateTextBoxColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-            this.finalFateTextBoxColumn.DataPropertyName = "FinalState";
-            this.finalFateTextBoxColumn.HeaderText = "Final State";
-            this.finalFateTextBoxColumn.Name = "finalFateTextBoxColumn";
-            this.finalFateTextBoxColumn.ReadOnly = true;
-            this.finalFateTextBoxColumn.Width = 76;
-            // 
-            // Column6
-            // 
-            this.Column6.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.Column6.DataPropertyName = "CallbackAttempts";
-            this.Column6.HeaderText = "CBs";
-            this.Column6.Name = "Column6";
-            this.Column6.ReadOnly = true;
             // 
             // Form1
             // 

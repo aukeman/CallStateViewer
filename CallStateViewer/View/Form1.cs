@@ -112,6 +112,11 @@ namespace CallStateViewer
 
                 if (0 < records.Count())
                 {
+                    var minimumFilterTime = records.Min(record => record.Timestamp);
+                    var maximumFilterTime = records.Max(record => record.Timestamp);
+
+                    summaryFilterDialog.SetValidTimeSpan(minimumFilterTime, maximumFilterTime);
+
                     callSummaryList = BuildCallSummaryTable();
                 }
             };

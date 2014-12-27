@@ -22,12 +22,16 @@ namespace CallStateViewer.View
             Filter = new SummaryFilter();
 
             Filter.CallIdFilter = "";
-            Filter.TimeInFilter = "";
-            Filter.FinalStateTimeFilter = "";
             Filter.FinalStateFilter = "";
-            Filter.CallbackAttemptsFilter = "";
             Filter.RecordNameFilter = "";
             Filter.RecordValueFilter = "";
+            Filter.TimeInAfterFilter = DateTime.MinValue;
+            Filter.TimeInBeforeFilter = DateTime.MinValue;
+            Filter.FinalStateTimeAfterFilter = DateTime.MinValue;
+            Filter.FinalStateTimeBeforeFilter = DateTime.MinValue;
+
+            Filter.CallbackAttemptsMinFilter = -1;
+            Filter.CallbackAttemptsMaxFilter = -1;
 
             this.okButton.Enabled = false;
             this.applyButton.Enabled = false;
@@ -39,18 +43,47 @@ namespace CallStateViewer.View
             private set;
         }
 
+        public void SetValidTimeSpan( DateTime minTime, DateTime maxTime )
+        {
+            this.timeInAfterDateTimePicker.MinDate =
+                this.timeInBeforeDateTimePicker.MinDate =
+                this.finalStateTimeAfterDateTimePicker.MinDate =
+                this.finalStateTimeBeforeDateTimePicker.MinDate = minTime;
+
+            this.timeInAfterDateTimePicker.MaxDate =
+                this.timeInBeforeDateTimePicker.MaxDate =
+                this.finalStateTimeAfterDateTimePicker.MaxDate =
+                this.finalStateTimeBeforeDateTimePicker.MaxDate = maxTime;
+        }
+
         private void okButton_Click(object sender, EventArgs e)
         {
             this.okButton.Enabled = false;
             this.applyButton.Enabled = false;
 
-            Filter.CallIdFilter = callIdFilterComboBox.Text;
-            Filter.TimeInFilter = timeInFilterComboBox.Text;
-            Filter.FinalStateTimeFilter = finalStateTimeFilterComboBox.Text;
-            Filter.FinalStateFilter = finalStateFilterComboBox.Text;
-            Filter.CallbackAttemptsFilter = callbackAttemptsFilterComboBox.Text;
-            Filter.RecordNameFilter = recordNameFilterComboBox.Text;
-            Filter.RecordValueFilter = recordValueFilterComboBox.Text;
+            callIdFilterComboBox.Text = Filter.CallIdFilter;
+            finalStateFilterComboBox.Text = Filter.FinalStateFilter;
+            recordNameFilterComboBox.Text = Filter.RecordNameFilter;
+            recordValueFilterComboBox.Text = Filter.RecordValueFilter;
+
+            Filter.TimeInAfterFilter = timeInFilterAfterEnabledCheckBox.Checked ? timeInAfterDateTimePicker.Value : DateTime.MinValue;
+            Filter.TimeInBeforeFilter = timeInFilterBeforeEnabledCheckBox.Checked ? timeInBeforeDateTimePicker.Value : DateTime.MinValue;
+            Filter.TimeInEmptyFilter = timeInEmptyCheckBox.Checked;
+
+            Filter.FinalStateTimeAfterFilter = finalStateTimeFilterAfterEnabledCheckBox.Checked ? finalStateTimeAfterDateTimePicker.Value : DateTime.MinValue;
+            Filter.FinalStateTimeBeforeFilter = finalStateTimeFilterBeforeEnabledCheckBox.Checked ? finalStateTimeBeforeDateTimePicker.Value : DateTime.MinValue;
+            Filter.FinalStateTimeEmptyFilter = finalStateTimeEmptyCheckBox.Checked;
+
+            Filter.CallbackAttemptsMinFilter = (int)(callbackAttemptsMinEnabledCheckBox.Checked ? callbackAttemptsMinNumericUpDown.Value : -1);
+            Filter.CallbackAttemptsMaxFilter = (int)(callbackAttemptsMaxEnabledCheckBox.Checked ? callbackAttemptsMaxNumericUpDown.Value : -1);
+
+            callbackAttemptsMinEnabledCheckBox.Checked = (-1 < Filter.CallbackAttemptsMinFilter);
+            callbackAttemptsMinNumericUpDown.Enabled = callbackAttemptsMinEnabledCheckBox.Checked;
+            callbackAttemptsMinNumericUpDown.Value = Filter.CallbackAttemptsMinFilter;
+
+            callbackAttemptsMaxEnabledCheckBox.Checked = (-1 < Filter.CallbackAttemptsMaxFilter);
+            callbackAttemptsMaxNumericUpDown.Enabled = callbackAttemptsMaxEnabledCheckBox.Checked;
+            callbackAttemptsMaxNumericUpDown.Value = Filter.CallbackAttemptsMaxFilter;
 
             if (FilterUpdated != null)
             {
@@ -69,12 +102,37 @@ namespace CallStateViewer.View
             this.applyButton.Enabled = false;
 
             callIdFilterComboBox.Text = Filter.CallIdFilter;
-            timeInFilterComboBox.Text = Filter.TimeInFilter;
-            finalStateTimeFilterComboBox.Text = Filter.FinalStateTimeFilter;
             finalStateFilterComboBox.Text = Filter.FinalStateFilter;
-            callbackAttemptsFilterComboBox.Text = Filter.CallbackAttemptsFilter;
             recordNameFilterComboBox.Text = Filter.RecordNameFilter;
             recordValueFilterComboBox.Text = Filter.RecordValueFilter;
+
+            timeInFilterAfterEnabledCheckBox.Checked = (Filter.TimeInAfterFilter != DateTime.MinValue);
+            timeInAfterDateTimePicker.Enabled = timeInFilterAfterEnabledCheckBox.Checked;
+            timeInAfterDateTimePicker.Value = (timeInFilterAfterEnabledCheckBox.Checked ? Filter.TimeInAfterFilter : timeInAfterDateTimePicker.MinDate);
+
+            timeInFilterBeforeEnabledCheckBox.Checked = (Filter.TimeInBeforeFilter != DateTime.MinValue);
+            timeInBeforeDateTimePicker.Enabled = timeInFilterBeforeEnabledCheckBox.Checked;
+            timeInBeforeDateTimePicker.Value = (timeInFilterBeforeEnabledCheckBox.Checked ? Filter.TimeInBeforeFilter : timeInBeforeDateTimePicker.MaxDate);
+
+            timeInEmptyCheckBox.Checked = Filter.TimeInEmptyFilter;
+
+            finalStateTimeFilterAfterEnabledCheckBox.Checked = (Filter.FinalStateTimeAfterFilter != DateTime.MinValue);
+            finalStateTimeAfterDateTimePicker.Enabled = finalStateTimeFilterAfterEnabledCheckBox.Checked;
+            finalStateTimeAfterDateTimePicker.Value = (finalStateTimeFilterAfterEnabledCheckBox.Checked ? Filter.FinalStateTimeAfterFilter : finalStateTimeAfterDateTimePicker.MinDate);
+
+            finalStateTimeFilterBeforeEnabledCheckBox.Checked = (Filter.FinalStateTimeBeforeFilter != DateTime.MinValue);
+            finalStateTimeBeforeDateTimePicker.Enabled = finalStateTimeFilterBeforeEnabledCheckBox.Checked;
+            finalStateTimeBeforeDateTimePicker.Value = (finalStateTimeFilterBeforeEnabledCheckBox.Checked ? Filter.FinalStateTimeBeforeFilter : finalStateTimeBeforeDateTimePicker.MaxDate);
+
+            finalStateTimeEmptyCheckBox.Checked = Filter.FinalStateTimeEmptyFilter;
+
+            callbackAttemptsMinEnabledCheckBox.Checked = (-1 < Filter.CallbackAttemptsMinFilter);
+            callbackAttemptsMinNumericUpDown.Enabled = callbackAttemptsMinEnabledCheckBox.Checked;
+            callbackAttemptsMinNumericUpDown.Value = Filter.CallbackAttemptsMinFilter;
+
+            callbackAttemptsMaxEnabledCheckBox.Checked = (-1 < Filter.CallbackAttemptsMaxFilter);
+            callbackAttemptsMaxNumericUpDown.Enabled = callbackAttemptsMaxEnabledCheckBox.Checked;
+            callbackAttemptsMaxNumericUpDown.Value = Filter.CallbackAttemptsMaxFilter;
 
             this.Hide();
         }
@@ -89,6 +147,69 @@ namespace CallStateViewer.View
         {
             e.Cancel = true;
             this.Hide();
+        }
+
+        private void filterCheckBox_Click(object sender, EventArgs e)
+        {
+            if ( sender == timeInFilterAfterEnabledCheckBox )
+            {
+                UpdateTimeFilterSensitivity(timeInFilterAfterEnabledCheckBox.Checked, timeInAfterDateTimePicker, Filter.TimeInAfterFilter, true );
+            }
+            else if ( sender == timeInFilterBeforeEnabledCheckBox )
+            {
+                UpdateTimeFilterSensitivity(timeInFilterBeforeEnabledCheckBox.Checked, timeInBeforeDateTimePicker, Filter.TimeInBeforeFilter, false );
+            }
+            else if ( sender == finalStateTimeFilterAfterEnabledCheckBox )
+            {
+                UpdateTimeFilterSensitivity(finalStateTimeFilterAfterEnabledCheckBox.Checked, finalStateTimeAfterDateTimePicker, Filter.FinalStateTimeAfterFilter, true );
+            }
+            else if ( sender == finalStateTimeFilterBeforeEnabledCheckBox )
+            {
+                UpdateTimeFilterSensitivity(finalStateTimeFilterBeforeEnabledCheckBox.Checked, finalStateTimeBeforeDateTimePicker, Filter.FinalStateTimeBeforeFilter, false);
+            }
+            else if ( sender == callbackAttemptsMinEnabledCheckBox )
+            {
+                UpdateCallbackAttemptsFilterSensitivity(callbackAttemptsMinEnabledCheckBox.Checked, callbackAttemptsMinNumericUpDown, Filter.CallbackAttemptsMinFilter);
+            }
+            else if ( sender == callbackAttemptsMaxEnabledCheckBox )
+            {
+                UpdateCallbackAttemptsFilterSensitivity(callbackAttemptsMaxEnabledCheckBox.Checked, callbackAttemptsMaxNumericUpDown, Filter.CallbackAttemptsMaxFilter);
+            }
+        }
+
+        private void UpdateTimeFilterSensitivity(bool sensitivity, DateTimePicker dateTimePicker, DateTime currentFilterValue, bool afterFilter )
+        {
+            dateTimePicker.Enabled = sensitivity;
+
+            if ( sensitivity )
+            {
+                if ( currentFilterValue != DateTime.MinValue )
+                {
+                    dateTimePicker.Value = currentFilterValue;
+                }
+                else if (afterFilter )
+                {
+                    dateTimePicker.Value = dateTimePicker.MinDate;
+                }
+                else
+                {
+                    dateTimePicker.Value = dateTimePicker.MaxDate;
+                }
+            }
+            else if ( afterFilter )
+            {
+                dateTimePicker.Value = dateTimePicker.MinDate;
+            }
+            else
+            {
+                dateTimePicker.Value = dateTimePicker.MaxDate;
+            }
+        }
+
+        private void UpdateCallbackAttemptsFilterSensitivity(bool sensitivity, NumericUpDown numericUpDown, int currentFilterValue )
+        {
+            numericUpDown.Enabled = sensitivity;
+            numericUpDown.Value = sensitivity ? currentFilterValue : numericUpDown.Minimum;
         }
     }
 }
