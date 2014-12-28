@@ -218,6 +218,7 @@
             this.timeInAfterDateTimePicker.Name = "timeInAfterDateTimePicker";
             this.timeInAfterDateTimePicker.Size = new System.Drawing.Size(200, 20);
             this.timeInAfterDateTimePicker.TabIndex = 17;
+            this.timeInAfterDateTimePicker.ValueChanged += new System.EventHandler(this.dateTimePicker_ValueChanged);
             // 
             // timeInFilterAfterEnabledCheckBox
             // 
@@ -253,6 +254,7 @@
             this.timeInBeforeDateTimePicker.Name = "timeInBeforeDateTimePicker";
             this.timeInBeforeDateTimePicker.Size = new System.Drawing.Size(200, 20);
             this.timeInBeforeDateTimePicker.TabIndex = 19;
+            this.timeInBeforeDateTimePicker.ValueChanged += new System.EventHandler(this.dateTimePicker_ValueChanged);
             // 
             // finalStateTimeFilterBeforeEnabledCheckBox
             // 
@@ -276,6 +278,7 @@
             this.finalStateTimeBeforeDateTimePicker.Name = "finalStateTimeBeforeDateTimePicker";
             this.finalStateTimeBeforeDateTimePicker.Size = new System.Drawing.Size(200, 20);
             this.finalStateTimeBeforeDateTimePicker.TabIndex = 23;
+            this.finalStateTimeBeforeDateTimePicker.ValueChanged += new System.EventHandler(this.dateTimePicker_ValueChanged);
             // 
             // finalStateTimeFilterAfterEnabledCheckBox
             // 
@@ -299,6 +302,7 @@
             this.finalStateTimeAfterDateTimePicker.Name = "finalStateTimeAfterDateTimePicker";
             this.finalStateTimeAfterDateTimePicker.Size = new System.Drawing.Size(200, 20);
             this.finalStateTimeAfterDateTimePicker.TabIndex = 21;
+            this.finalStateTimeAfterDateTimePicker.ValueChanged += new System.EventHandler(this.dateTimePicker_ValueChanged);
             // 
             // timeInEmptyCheckBox
             // 
@@ -310,6 +314,7 @@
             this.timeInEmptyCheckBox.TabIndex = 25;
             this.timeInEmptyCheckBox.Text = "Empty";
             this.timeInEmptyCheckBox.UseVisualStyleBackColor = true;
+            this.timeInEmptyCheckBox.Click += new System.EventHandler(this.filterCheckBox_Click);
             // 
             // finalStateTimeEmptyCheckBox
             // 
@@ -321,6 +326,7 @@
             this.finalStateTimeEmptyCheckBox.TabIndex = 26;
             this.finalStateTimeEmptyCheckBox.Text = "Empty";
             this.finalStateTimeEmptyCheckBox.UseVisualStyleBackColor = true;
+            this.finalStateTimeEmptyCheckBox.Click += new System.EventHandler(this.filterCheckBox_Click);
             // 
             // callbackAttemptsMinEnabledCheckBox
             // 
@@ -340,6 +346,7 @@
             this.callbackAttemptsMinNumericUpDown.Name = "callbackAttemptsMinNumericUpDown";
             this.callbackAttemptsMinNumericUpDown.Size = new System.Drawing.Size(68, 20);
             this.callbackAttemptsMinNumericUpDown.TabIndex = 28;
+            this.callbackAttemptsMinNumericUpDown.ValueChanged += new System.EventHandler(this.numericUpDown_ValueChanged);
             // 
             // callbackAttemptsMaxNumericUpDown
             // 
@@ -348,6 +355,7 @@
             this.callbackAttemptsMaxNumericUpDown.Name = "callbackAttemptsMaxNumericUpDown";
             this.callbackAttemptsMaxNumericUpDown.Size = new System.Drawing.Size(68, 20);
             this.callbackAttemptsMaxNumericUpDown.TabIndex = 30;
+            this.callbackAttemptsMaxNumericUpDown.ValueChanged += new System.EventHandler(this.numericUpDown_ValueChanged);
             // 
             // callbackAttemptsMaxEnabledCheckBox
             // 
