@@ -165,18 +165,23 @@ namespace CallStateViewer.View
         {
             bool result = true;
             
-            if ( recordNamePattern != "" )
+            if ( recordNamePattern != "" && recordValuePattern == "")
             {
-                result = result && (from record in records
-                                    where Regex.Match(record.Name, recordNamePattern).Success
-                                    select record).Any();
+                result = (from record in records
+                          where Regex.Match(record.Name, recordNamePattern).Success
+                          select record).Any();
             }
-
-            if ( recordValuePattern != "" )
+            else if ( recordNamePattern == "" && recordValuePattern != "" )
             {
-                result = result && (from record in records
-                                    where Regex.Match(record.Value, recordValuePattern).Success
-                                    select record).Any();
+                result = (from record in records
+                          where Regex.Match(record.Value, recordValuePattern).Success
+                          select record).Any();
+            }
+            else if ( recordNamePattern != "" && recordValuePattern != "" )
+            {
+                result = (from record in records
+                          where Regex.Match(record.Name, recordNamePattern).Success && Regex.Match(record.Value, recordValuePattern).Success
+                          select record).Any();
             }
 
             return result;

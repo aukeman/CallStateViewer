@@ -303,6 +303,10 @@ namespace CallStateViewer
             {
                 BuildCallIdTableContextMenu(callIdHitTestInfo.RowIndex);
             }
+            else if ( mCallIdDataGridView.ClientRectangle.Contains(p) )
+            {
+                BuildCallIdTableContextMenu(-1);
+            }
             else if ( DataGridViewHitTestType.Cell == logRecordHitTestInfo.Type )
             {
                 BuildLogRecordTableContextMenu(logRecordHitTestInfo.RowIndex);
@@ -317,38 +321,46 @@ namespace CallStateViewer
         {
             contextMenuStrip.Items.Clear();
 
-            var callId = mCallIdDataGridView.Rows[rowIndex].Cells[0].Value.ToString();
-            var copyClickedCallId = BuildCopyCallIdMenuItem(callId);
-
-            var numberOfSelectedRows = mCallIdDataGridView.SelectedRows.Count;
-
-            var label =
-                    String.Format("Copy &selected Call ID{0} to Clipboard", (1 < numberOfSelectedRows ? "s" : ""));
-
-            var copySelectedCallIds = new ToolStripMenuItem(label, null, new EventHandler(delegate(object sender2, EventArgs e2)
+            if (-1 < rowIndex)
             {
-                // if the call IDs are taken from the selected rows collection, they are in the 
-                // order they were selected.
-                // This way they are in the order they appear on screen
-                var selectedCallIds = from callIdRow in mCallIdDataGridView.Rows.Cast<DataGridViewRow>()
-                                        where callIdRow.Selected
-                                        select callIdRow.Cells[0].Value.ToString();
 
-                Clipboard.SetText(String.Join(Environment.NewLine, selectedCallIds));
-            }));
+                var callId = mCallIdDataGridView.Rows[rowIndex].Cells[0].Value.ToString();
+                var copyClickedCallId = BuildCopyCallIdMenuItem(callId);
 
-            copySelectedCallIds.Enabled = (0 < numberOfSelectedRows);
+                var numberOfSelectedRows = mCallIdDataGridView.SelectedRows.Count;
+
+                var label =
+                        String.Format("Copy &selected Call ID{0} to Clipboard", (1 < numberOfSelectedRows ? "s" : ""));
+
+                var copySelectedCallIds = new ToolStripMenuItem(label, null, new EventHandler(delegate(object sender2, EventArgs e2)
+                {
+                    // if the call IDs are taken from the selected rows collection, they are in the 
+                    // order they were selected.
+                    // This way they are in the order they appear on screen
+                    var selectedCallIds = from callIdRow in mCallIdDataGridView.Rows.Cast<DataGridViewRow>()
+                                          where callIdRow.Selected
+                                          select callIdRow.Cells[0].Value.ToString();
+
+                    Clipboard.SetText(String.Join(Environment.NewLine, selectedCallIds));
+                }));
+
+                copySelectedCallIds.Enabled = (0 < numberOfSelectedRows);
+
+                contextMenuStrip.Items.Add(copyClickedCallId);
+                contextMenuStrip.Items.Add(copySelectedCallIds);
+                contextMenuStrip.Items.Add(new ToolStripSeparator());
+            }
 
             var reload = BuildReloadMenuItem();
+            reload.Enabled = this.loadedFiles.Any();
 
             var summaryFilter = new ToolStripMenuItem("&Filter Call Summary", null, new EventHandler(delegate(object sender, EventArgs e)
             {
                 this.summaryFilterDialog.Show();
             }));
+            summaryFilter.Enabled = this.loadedFiles.Any();
 
-            contextMenuStrip.Items.Add(copyClickedCallId);
-            contextMenuStrip.Items.Add(copySelectedCallIds);
-            contextMenuStrip.Items.Add(new ToolStripSeparator());
+
             contextMenuStrip.Items.Add(reload);
             contextMenuStrip.Items.Add(new ToolStripSeparator());
             contextMenuStrip.Items.Add(summaryFilter);
