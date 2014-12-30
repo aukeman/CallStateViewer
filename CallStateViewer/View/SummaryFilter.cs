@@ -18,8 +18,7 @@ namespace CallStateViewer.View
                     StringFilter(FinalState, callSummary.FinalState) &&
                     TimeFilter(callSummary.TimeIn, TimeInAfterActive, TimeInAfter, TimeInBeforeActive, TimeInBefore, TimeInEmpty) &&
                     TimeFilter(callSummary.FinalStateTime, FinalStateTimeAfterActive, FinalStateTimeAfter, FinalStateTimeBeforeActive, FinalStateTimeBefore, FinalStateTimeEmpty) &&
-                    (!CallbackAttemptsMinActive || CallbackAttemptsMin <= Int32.Parse(callSummary.CallbackAttempts)) &&
-                    (!CallbackAttemptsMaxActive || Int32.Parse(callSummary.CallbackAttempts) <= CallbackAttemptsMax));
+                    CallbackAttemptsFilter(CallbackAttemptsMinActive, CallbackAttemptsMin, CallbackAttemptsMaxActive, CallbackAttemptsMax, callSummary.CallbackAttempts));
         }
 
         public string CallId
@@ -150,6 +149,15 @@ namespace CallStateViewer.View
             }
 
             return result;
+        }
+
+        private static bool CallbackAttemptsFilter(bool minActive, int min, bool maxActive, int max, string numberOfAttemptsStr)
+        {
+            int numberOfAttempts = 0;
+            Int32.TryParse(numberOfAttemptsStr, out numberOfAttempts);
+
+            return ((!minActive || min <= numberOfAttempts) &&
+                    (!maxActive || numberOfAttempts <= max ));
         }
     }
 }

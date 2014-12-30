@@ -223,6 +223,5 @@ namespace CallStateViewer.View
                 numericUpDown.Value = currentFilterValue;
             }
         }
-
     }
 }

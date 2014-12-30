@@ -347,6 +347,7 @@
             this.callbackAttemptsMinNumericUpDown.Size = new System.Drawing.Size(68, 20);
             this.callbackAttemptsMinNumericUpDown.TabIndex = 28;
             this.callbackAttemptsMinNumericUpDown.ValueChanged += new System.EventHandler(this.numericUpDown_ValueChanged);
+            this.callbackAttemptsMinNumericUpDown.KeyDown += new System.Windows.Forms.KeyEventHandler(this.numericUpDown_ValueChanged);
             // 
             // callbackAttemptsMaxNumericUpDown
             // 
@@ -356,6 +357,7 @@
             this.callbackAttemptsMaxNumericUpDown.Size = new System.Drawing.Size(68, 20);
             this.callbackAttemptsMaxNumericUpDown.TabIndex = 30;
             this.callbackAttemptsMaxNumericUpDown.ValueChanged += new System.EventHandler(this.numericUpDown_ValueChanged);
+            this.callbackAttemptsMaxNumericUpDown.KeyDown += new System.Windows.Forms.KeyEventHandler(this.numericUpDown_ValueChanged);
             // 
             // callbackAttemptsMaxEnabledCheckBox
             // 
