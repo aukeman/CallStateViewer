@@ -14,12 +14,10 @@ namespace CallStateViewer.View
     {
         public bool Passes(CallSummary callSummary)
         {
-            return ((CallId == "" || Regex.Match(callSummary.CallId, CallId).Success) &&
-                    (FinalState == "" || Regex.Match(callSummary.FinalState, FinalState).Success) &&
-                    ((TimeInEmpty && callSummary.TimeIn == DateTime.MinValue) || ((!TimeInAfterActive || TimeInAfter < callSummary.TimeIn) &&
-                                                                                  (!TimeInBeforeActive || callSummary.TimeIn < TimeInBefore))) &&
-                    (!FinalStateTimeAfterActive || FinalStateTimeAfter < callSummary.FinalStateTime) &&
-                    (!FinalStateTimeBeforeActive || callSummary.FinalStateTime < FinalStateTimeBefore) &&
+            return (StringFilter(CallId, callSummary.CallId) &&
+                    StringFilter(FinalState, callSummary.FinalState) &&
+                    TimeFilter(callSummary.TimeIn, TimeInAfterActive, TimeInAfter, TimeInBeforeActive, TimeInBefore, TimeInEmpty) &&
+                    TimeFilter(callSummary.FinalStateTime, FinalStateTimeAfterActive, FinalStateTimeAfter, FinalStateTimeBeforeActive, FinalStateTimeBefore, FinalStateTimeEmpty) &&
                     (!CallbackAttemptsMinActive || CallbackAttemptsMin <= Int32.Parse(callSummary.CallbackAttempts)) &&
                     (!CallbackAttemptsMaxActive || Int32.Parse(callSummary.CallbackAttempts) <= CallbackAttemptsMax));
         }
@@ -132,5 +130,26 @@ namespace CallStateViewer.View
             set;
         }
 
+        private static bool StringFilter(string needle, string haystack)
+        {
+            return (needle == "" || Regex.Match(haystack, needle).Success);
+        }
+
+        private static bool TimeFilter(DateTime timeToCheck, bool timeAfterFilterActive, DateTime timeAfterFilter, bool timeBeforeFilterActive, DateTime timeBeforeFilter, bool timeEmptyFilter)
+        {
+            bool result = ((!timeAfterFilterActive || timeAfterFilter < timeToCheck) &&
+                           (!timeBeforeFilterActive || timeToCheck != DateTime.MinValue && timeToCheck < timeBeforeFilter));
+
+            if (!timeAfterFilterActive && !timeBeforeFilterActive && timeEmptyFilter)
+            {
+                result = (timeToCheck == DateTime.MinValue);
+            }
+            else if (timeEmptyFilter)
+            {
+                result = (result || timeToCheck == DateTime.MinValue);
+            }
+
+            return result;
+        }
     }
 }

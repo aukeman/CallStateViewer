@@ -72,10 +72,10 @@ namespace CallStateViewer.View
             this.okButton.Enabled = false;
             this.applyButton.Enabled = false;
 
-            callIdFilterComboBox.Text = Filter.CallId;
-            finalStateFilterComboBox.Text = Filter.FinalState;
-            recordNameFilterComboBox.Text = Filter.RecordName;
-            recordValueFilterComboBox.Text = Filter.RecordValue;
+            Filter.CallId = callIdFilterComboBox.Text;
+            Filter.FinalState = finalStateFilterComboBox.Text;
+            Filter.RecordName = recordNameFilterComboBox.Text;
+            Filter.RecordValue = recordValueFilterComboBox.Text;
 
             Filter.TimeInAfterActive = timeInFilterAfterEnabledCheckBox.Checked;
             Filter.TimeInAfter = timeInAfterDateTimePicker.Value;
