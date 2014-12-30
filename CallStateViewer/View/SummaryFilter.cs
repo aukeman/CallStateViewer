@@ -16,6 +16,7 @@ namespace CallStateViewer.View
         {
             return (StringFilter(CallId, callSummary.CallId) &&
                     StringFilter(FinalState, callSummary.FinalState) &&
+                    RecordFilter(RecordName, RecordValue, callSummary.Records) &&
                     TimeFilter(callSummary.TimeIn, TimeInAfterActive, TimeInAfter, TimeInBeforeActive, TimeInBefore, TimeInEmpty) &&
                     TimeFilter(callSummary.FinalStateTime, FinalStateTimeAfterActive, FinalStateTimeAfter, FinalStateTimeBeforeActive, FinalStateTimeBefore, FinalStateTimeEmpty) &&
                     CallbackAttemptsFilter(CallbackAttemptsMinActive, CallbackAttemptsMin, CallbackAttemptsMaxActive, CallbackAttemptsMax, callSummary.CallbackAttempts));
@@ -159,5 +160,28 @@ namespace CallStateViewer.View
             return ((!minActive || min <= numberOfAttempts) &&
                     (!maxActive || numberOfAttempts <= max ));
         }
+
+        private static bool RecordFilter(string recordNamePattern, string recordValuePattern, IEnumerable<CallDataRecord> records)
+        {
+            bool result = true;
+            
+            if ( recordNamePattern != "" )
+            {
+                result = result && (from record in records
+                                    where Regex.Match(record.Name, recordNamePattern).Success
+                                    select record).Any();
+            }
+
+            if ( recordValuePattern != "" )
+            {
+                result = result && (from record in records
+                                    where Regex.Match(record.Value, recordValuePattern).Success
+                                    select record).Any();
+            }
+
+            return result;
+        }
+
+
     }
 }

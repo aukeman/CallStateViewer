@@ -206,7 +206,8 @@ namespace CallStateViewer
                                   FinalState = (finalState != null ? finalState.Value : ""),
                                   CallbackAttempts = (callbackAttempts == 0 ? "" : callbackAttempts.ToString()),
                                   EarliestRecordTimestamp = earliestRecordTimestamp,
-                                  LatestRecordTimestamp = latestRecordTimestamp
+                                  LatestRecordTimestamp = latestRecordTimestamp,
+                                  Records = g
                               };
 
             return callSummary.Where(c => summaryFilterDialog.Filter.Passes(c));

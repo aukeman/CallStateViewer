@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 
 namespace CallStateViewer.Model
 {
-    class CallDataRecord : IEquatable<CallDataRecord>
+    public class CallDataRecord : IEquatable<CallDataRecord>
     {
         public CallDataRecord(string callId, string currentState, string name, string value, DateTime timestamp)
         {

@@ -49,5 +49,11 @@ namespace CallStateViewer.Model
             get;
             set;
         }
+
+        public IEnumerable<CallDataRecord> Records
+        {
+            get;
+            set;
+        }
     }
 }
