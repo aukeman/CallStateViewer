@@ -1,6 +1,6 @@
 ﻿namespace CallStateViewer
 {
-    partial class Form1
+    partial class CallStateViewerMain
     {
         /// <summary>
         /// Required designer variable.
@@ -226,7 +226,7 @@
             this.progressBar.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
             this.progressBar.Visible = false;
             // 
-            // Form1
+            // CallStateViewerMain
             // 
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -235,8 +235,8 @@
             this.Controls.Add(this.mDataGridView);
             this.Controls.Add(this.mCallIdDataGridView);
             this.Controls.Add(this.statusStrip1);
-            this.Name = "Form1";
-            this.Text = "Form1";
+            this.Name = "CallStateViewerMain";
+            this.Text = "VH Call State Viewer";
             this.DragDrop += new System.Windows.Forms.DragEventHandler(this.Form1_DragDrop);
             this.DragEnter += new System.Windows.Forms.DragEventHandler(this.Form1_DragEnter);
             ((System.ComponentModel.ISupportInitialize)(this.mDataGridView)).EndInit();

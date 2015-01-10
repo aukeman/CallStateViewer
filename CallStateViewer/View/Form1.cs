@@ -20,7 +20,7 @@ using CallStateViewer.View;
 
 namespace CallStateViewer
 {
-    public partial class Form1 : Form
+    public partial class CallStateViewerMain : Form
     {
 
         private List<CallDataRecord> records = new List<CallDataRecord>();
@@ -29,7 +29,7 @@ namespace CallStateViewer
 
         SummaryFilterDialog summaryFilterDialog = new SummaryFilterDialog();
 
-        public Form1()
+        public CallStateViewerMain()
         {
             InitializeComponent();
 
@@ -370,9 +370,9 @@ namespace CallStateViewer
             summaryFilter.Enabled = this.loadedFiles.Any() && !this.Busy;
 
 
-            contextMenuStrip.Items.Add(reload);
-            contextMenuStrip.Items.Add(new ToolStripSeparator());
             contextMenuStrip.Items.Add(summaryFilter);
+            contextMenuStrip.Items.Add(new ToolStripSeparator());
+            contextMenuStrip.Items.Add(reload);
 
         }
 
