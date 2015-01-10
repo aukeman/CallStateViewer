@@ -59,6 +59,8 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.caseSensitiveCheckBox = new System.Windows.Forms.CheckBox();
+            this.regexCheckBox = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.callbackAttemptsMinNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.callbackAttemptsMaxNumericUpDown)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -116,7 +118,7 @@
             // okButton
             // 
             this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.okButton.Location = new System.Drawing.Point(156, 377);
+            this.okButton.Location = new System.Drawing.Point(156, 391);
             this.okButton.Name = "okButton";
             this.okButton.Size = new System.Drawing.Size(75, 23);
             this.okButton.TabIndex = 5;
@@ -127,7 +129,7 @@
             // cancelButton
             // 
             this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.cancelButton.Location = new System.Drawing.Point(318, 377);
+            this.cancelButton.Location = new System.Drawing.Point(318, 391);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(75, 23);
             this.cancelButton.TabIndex = 6;
@@ -138,7 +140,7 @@
             // applyButton
             // 
             this.applyButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.applyButton.Location = new System.Drawing.Point(237, 377);
+            this.applyButton.Location = new System.Drawing.Point(237, 391);
             this.applyButton.Name = "applyButton";
             this.applyButton.Size = new System.Drawing.Size(75, 23);
             this.applyButton.TabIndex = 7;
@@ -378,7 +380,7 @@
             this.groupBox1.Controls.Add(this.timeInBeforeDateTimePicker);
             this.groupBox1.Controls.Add(this.timeInFilterBeforeEnabledCheckBox);
             this.groupBox1.Controls.Add(this.timeInEmptyCheckBox);
-            this.groupBox1.Location = new System.Drawing.Point(12, 120);
+            this.groupBox1.Location = new System.Drawing.Point(12, 143);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(388, 86);
             this.groupBox1.TabIndex = 31;
@@ -392,7 +394,7 @@
             this.groupBox2.Controls.Add(this.finalStateTimeBeforeDateTimePicker);
             this.groupBox2.Controls.Add(this.finalStateTimeFilterBeforeEnabledCheckBox);
             this.groupBox2.Controls.Add(this.finalStateTimeEmptyCheckBox);
-            this.groupBox2.Location = new System.Drawing.Point(12, 212);
+            this.groupBox2.Location = new System.Drawing.Point(12, 235);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(388, 87);
             this.groupBox2.TabIndex = 32;
@@ -405,18 +407,44 @@
             this.groupBox3.Controls.Add(this.callbackAttemptsMinNumericUpDown);
             this.groupBox3.Controls.Add(this.callbackAttemptsMaxNumericUpDown);
             this.groupBox3.Controls.Add(this.callbackAttemptsMaxEnabledCheckBox);
-            this.groupBox3.Location = new System.Drawing.Point(12, 305);
+            this.groupBox3.Location = new System.Drawing.Point(12, 328);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(388, 45);
             this.groupBox3.TabIndex = 33;
             this.groupBox3.TabStop = false;
+            // 
+            // caseSensitiveCheckBox
+            // 
+            this.caseSensitiveCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.caseSensitiveCheckBox.AutoSize = true;
+            this.caseSensitiveCheckBox.Location = new System.Drawing.Point(111, 120);
+            this.caseSensitiveCheckBox.Name = "caseSensitiveCheckBox";
+            this.caseSensitiveCheckBox.Size = new System.Drawing.Size(96, 17);
+            this.caseSensitiveCheckBox.TabIndex = 27;
+            this.caseSensitiveCheckBox.Text = "Case Sensitive";
+            this.caseSensitiveCheckBox.UseVisualStyleBackColor = true;
+            this.caseSensitiveCheckBox.CheckedChanged += new System.EventHandler(this.filterCheckBox_Click);
+            // 
+            // regexCheckBox
+            // 
+            this.regexCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.regexCheckBox.AutoSize = true;
+            this.regexCheckBox.Location = new System.Drawing.Point(213, 120);
+            this.regexCheckBox.Name = "regexCheckBox";
+            this.regexCheckBox.Size = new System.Drawing.Size(57, 17);
+            this.regexCheckBox.TabIndex = 34;
+            this.regexCheckBox.Text = "Regex";
+            this.regexCheckBox.UseVisualStyleBackColor = true;
+            this.regexCheckBox.CheckedChanged += new System.EventHandler(this.filterCheckBox_Click);
             // 
             // SummaryFilterDialog
             // 
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(405, 412);
+            this.ClientSize = new System.Drawing.Size(405, 426);
+            this.Controls.Add(this.regexCheckBox);
+            this.Controls.Add(this.caseSensitiveCheckBox);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
@@ -484,5 +512,7 @@
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.CheckBox caseSensitiveCheckBox;
+        private System.Windows.Forms.CheckBox regexCheckBox;
     }
 }

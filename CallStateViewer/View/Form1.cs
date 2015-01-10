@@ -88,6 +88,9 @@ namespace CallStateViewer
 
             IEnumerable<CallSummary> callSummaryList = null;
 
+            DateTime minimumTime = DateTime.MinValue;
+            DateTime maximumTime = DateTime.MinValue;
+
             worker.DoWork += delegate(object sender, DoWorkEventArgs e)
             {
                 MainReportParser.Reset();
@@ -112,10 +115,8 @@ namespace CallStateViewer
 
                 if (0 < records.Count())
                 {
-                    var minimumTime = records.Min(record => record.Timestamp);
-                    var maximumTime = records.Max(record => record.Timestamp);
-
-                    summaryFilterDialog.SetTimeSpan(minimumTime, maximumTime);
+                    minimumTime = records.Min(record => record.Timestamp);
+                    maximumTime = records.Max(record => record.Timestamp);
 
                     callSummaryList = BuildCallSummaryTable();
                 }
@@ -128,6 +129,11 @@ namespace CallStateViewer
 
             worker.RunWorkerCompleted += delegate(object sender, RunWorkerCompletedEventArgs e)
             {
+                if (minimumTime != DateTime.MinValue)
+                {
+                    summaryFilterDialog.SetTimeSpan(minimumTime, maximumTime);
+                }
+
                 this.Busy = false;
                 DisplayCallSummaryTable();
             };
@@ -303,13 +309,17 @@ namespace CallStateViewer
             {
                 BuildCallIdTableContextMenu(callIdHitTestInfo.RowIndex);
             }
-            else if ( mCallIdDataGridView.ClientRectangle.Contains(p) )
+            else if (mCallIdDataGridView.ClientRectangle.Contains(callIdCoord))
             {
                 BuildCallIdTableContextMenu(-1);
             }
             else if ( DataGridViewHitTestType.Cell == logRecordHitTestInfo.Type )
             {
                 BuildLogRecordTableContextMenu(logRecordHitTestInfo.RowIndex);
+            }
+            else if (mDataGridView.ClientRectangle.Contains(logRecordCoord))
+            {
+                BuildLogRecordTableContextMenu(-1);
             }
             else
             {
@@ -352,13 +362,12 @@ namespace CallStateViewer
             }
 
             var reload = BuildReloadMenuItem();
-            reload.Enabled = this.loadedFiles.Any();
 
             var summaryFilter = new ToolStripMenuItem("&Filter Call Summary", null, new EventHandler(delegate(object sender, EventArgs e)
             {
                 this.summaryFilterDialog.Show();
             }));
-            summaryFilter.Enabled = this.loadedFiles.Any();
+            summaryFilter.Enabled = this.loadedFiles.Any() && !this.Busy;
 
 
             contextMenuStrip.Items.Add(reload);
@@ -371,42 +380,47 @@ namespace CallStateViewer
         {
             contextMenuStrip.Items.Clear();
 
-            var callId = (mDataGridView.Rows[rowIndex].DataBoundItem as CallDataRecord).CallId;
-            var copyClickedCallId = BuildCopyCallIdMenuItem(callId);
-
-            var numberOfSelectedRows = mDataGridView.SelectedRows.Count;
-
-            var label =
-                String.Format("Copy &selected Log Record{0} to Clipboard", (1 < numberOfSelectedRows ? "s" : ""));
-
-            var copySelectedLogRecords = new ToolStripMenuItem(label, null, new EventHandler(delegate(object sender, EventArgs e)
+            if (-1 < rowIndex)
             {
-                // if the call IDs are taken from the selected rows collection, they are in the 
-                // order they were selected.
-                // This way they are in the order they appear on screen
-                var selectedLogRecords = from logRow in mDataGridView.Rows.Cast<DataGridViewRow>()
-                                            where logRow.Selected
-                                            select MainReportParser.LogStringFromCallDataRecord( logRow.DataBoundItem as CallDataRecord );
 
-                Clipboard.SetText(String.Join(Environment.NewLine, selectedLogRecords));
-            }));
-            copySelectedLogRecords.Enabled = (0 < numberOfSelectedRows);
+                var callId = (mDataGridView.Rows[rowIndex].DataBoundItem as CallDataRecord).CallId;
+                var copyClickedCallId = BuildCopyCallIdMenuItem(callId);
+
+                var numberOfSelectedRows = mDataGridView.SelectedRows.Count;
+
+                var label =
+                    String.Format("Copy &selected Log Record{0} to Clipboard", (1 < numberOfSelectedRows ? "s" : ""));
+
+                var copySelectedLogRecords = new ToolStripMenuItem(label, null, new EventHandler(delegate(object sender, EventArgs e)
+                {
+                    // if the call IDs are taken from the selected rows collection, they are in the 
+                    // order they were selected.
+                    // This way they are in the order they appear on screen
+                    var selectedLogRecords = from logRow in mDataGridView.Rows.Cast<DataGridViewRow>()
+                                             where logRow.Selected
+                                             select MainReportParser.LogStringFromCallDataRecord(logRow.DataBoundItem as CallDataRecord);
+
+                    Clipboard.SetText(String.Join(Environment.NewLine, selectedLogRecords));
+                }));
+                copySelectedLogRecords.Enabled = (0 < numberOfSelectedRows);
 
 
-            var copyAllLogRecords = new ToolStripMenuItem("Copy &all Log Records to Clipboard", null, new EventHandler(delegate(object sender, EventArgs e)
-            {
-                var allLogRecords = from logRow in mDataGridView.Rows.Cast<DataGridViewRow>()
-                                    select MainReportParser.LogStringFromCallDataRecord(logRow.DataBoundItem as CallDataRecord);
+                var copyAllLogRecords = new ToolStripMenuItem("Copy &all Log Records to Clipboard", null, new EventHandler(delegate(object sender, EventArgs e)
+                {
+                    var allLogRecords = from logRow in mDataGridView.Rows.Cast<DataGridViewRow>()
+                                        select MainReportParser.LogStringFromCallDataRecord(logRow.DataBoundItem as CallDataRecord);
 
-                Clipboard.SetText(String.Join(Environment.NewLine, allLogRecords));
-            }));
+                    Clipboard.SetText(String.Join(Environment.NewLine, allLogRecords));
+                }));
+
+                contextMenuStrip.Items.Add(copyClickedCallId);
+                contextMenuStrip.Items.Add(copySelectedLogRecords);
+                contextMenuStrip.Items.Add(copyAllLogRecords);
+                contextMenuStrip.Items.Add((new ToolStripSeparator()));
+            }
 
             var reload = BuildReloadMenuItem();
 
-            contextMenuStrip.Items.Add(copyClickedCallId);
-            contextMenuStrip.Items.Add(copySelectedLogRecords);
-            contextMenuStrip.Items.Add(copyAllLogRecords);
-            contextMenuStrip.Items.Add((new ToolStripSeparator()));
             contextMenuStrip.Items.Add(reload);
         }
 
@@ -425,7 +439,7 @@ namespace CallStateViewer
                 LoadFiles(this.loadedFiles);
             }));
 
-            result.Enabled = !this.Busy;
+            result.Enabled = this.loadedFiles.Any() && !this.Busy;
 
             return result;
         }

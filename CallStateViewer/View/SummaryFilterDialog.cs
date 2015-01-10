@@ -8,6 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+using System.Text.RegularExpressions;
+
 namespace CallStateViewer.View
 {
     public partial class SummaryFilterDialog : Form
@@ -72,6 +74,16 @@ namespace CallStateViewer.View
             this.okButton.Enabled = false;
             this.applyButton.Enabled = false;
 
+            if ( this.regexCheckBox.Checked &&
+                (!CheckForValidRegex(callIdFilterComboBox) ||
+                 !CheckForValidRegex(finalStateFilterComboBox) ||
+                 !CheckForValidRegex(recordNameFilterComboBox) ||
+                 !CheckForValidRegex(recordValueFilterComboBox)))
+            {
+                MessageBox.Show(this, "Invalid regular expression Detected.  Correct and submit again.", "Invalid Regular Expression", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
             Filter.CallId = callIdFilterComboBox.Text;
             Filter.FinalState = finalStateFilterComboBox.Text;
             Filter.RecordName = recordNameFilterComboBox.Text;
@@ -94,6 +106,14 @@ namespace CallStateViewer.View
 
             Filter.CallbackAttemptsMaxActive = callbackAttemptsMaxEnabledCheckBox.Checked;
             Filter.CallbackAttemptsMax = (int)callbackAttemptsMaxNumericUpDown.Value;
+
+            UpdateDropDownWithFilterText(callIdFilterComboBox);
+            UpdateDropDownWithFilterText(finalStateFilterComboBox);
+            UpdateDropDownWithFilterText(recordNameFilterComboBox);
+            UpdateDropDownWithFilterText(recordValueFilterComboBox);
+
+            this.Filter.UseRegex = this.regexCheckBox.Checked;
+            this.Filter.CaseSensitive = this.caseSensitiveCheckBox.Checked;
 
             if (FilterUpdated != null)
             {
@@ -143,6 +163,12 @@ namespace CallStateViewer.View
 
         private void filterComboBox_TextChanged(object sender, EventArgs e)
         {
+
+            if ( sender is ComboBox )
+            {
+                (sender as ComboBox).BackColor = SystemColors.Window;
+            }
+
             this.okButton.Enabled = true;
             this.applyButton.Enabled = true;
         }
@@ -222,6 +248,34 @@ namespace CallStateViewer.View
             {
                 numericUpDown.Value = currentFilterValue;
             }
+        }
+
+        private void UpdateDropDownWithFilterText(ComboBox comboBox)
+        {
+            if ( comboBox.Text != "" && !comboBox.Items.Contains(comboBox.Text))
+            {
+                comboBox.Items.Add(comboBox.Text);
+            }
+        }
+
+        private bool CheckForValidRegex(ComboBox comboBox)
+        {
+            bool result = true;
+
+            try
+            {
+                if (comboBox.Text != "")
+                {
+                    new Regex(comboBox.Text);
+                }
+            }
+            catch(Exception e)
+            {
+                comboBox.BackColor = Color.LightPink;
+                result = false;
+            }
+
+            return result;
         }
     }
 }

@@ -130,12 +130,39 @@ namespace CallStateViewer.View
             set;
         }
 
-        private static bool StringFilter(string needle, string haystack)
+        public bool UseRegex
         {
-            return (needle == "" || Regex.Match(haystack, needle).Success);
+            get;
+            set;
         }
 
-        private static bool TimeFilter(DateTime timeToCheck, bool timeAfterFilterActive, DateTime timeAfterFilter, bool timeBeforeFilterActive, DateTime timeBeforeFilter, bool timeEmptyFilter)
+        public bool CaseSensitive
+        {
+            get;
+            set;
+        }
+
+        private bool StringFilter(string needle, string haystack)
+        {
+            if ( needle == "" )
+            {
+                return true;
+            }
+            else if (this.UseRegex)
+            {
+                return (Regex.Match(haystack, needle, this.CaseSensitive ? RegexOptions.None : RegexOptions.IgnoreCase).Success);
+            }
+            else if (this.CaseSensitive)
+            {
+                return haystack.Contains(needle);
+            }
+            else
+            {
+                return haystack.ToLower().Contains(needle.ToLower());
+            }
+        }
+
+        private bool TimeFilter(DateTime timeToCheck, bool timeAfterFilterActive, DateTime timeAfterFilter, bool timeBeforeFilterActive, DateTime timeBeforeFilter, bool timeEmptyFilter)
         {
             bool result = ((!timeAfterFilterActive || timeAfterFilter < timeToCheck) &&
                            (!timeBeforeFilterActive || timeToCheck != DateTime.MinValue && timeToCheck < timeBeforeFilter));
@@ -152,7 +179,7 @@ namespace CallStateViewer.View
             return result;
         }
 
-        private static bool CallbackAttemptsFilter(bool minActive, int min, bool maxActive, int max, string numberOfAttemptsStr)
+        private bool CallbackAttemptsFilter(bool minActive, int min, bool maxActive, int max, string numberOfAttemptsStr)
         {
             int numberOfAttempts = 0;
             Int32.TryParse(numberOfAttemptsStr, out numberOfAttempts);
@@ -161,7 +188,7 @@ namespace CallStateViewer.View
                     (!maxActive || numberOfAttempts <= max ));
         }
 
-        private static bool RecordFilter(string recordNamePattern, string recordValuePattern, IEnumerable<CallDataRecord> records)
+        private bool RecordFilter(string recordNamePattern, string recordValuePattern, IEnumerable<CallDataRecord> records)
         {
             bool result = true;
             
@@ -186,7 +213,5 @@ namespace CallStateViewer.View
 
             return result;
         }
-
-
     }
 }
