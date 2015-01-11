@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CallStateViewerMain));
             this.mDataGridView = new System.Windows.Forms.DataGridView();
             this.Column4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -235,6 +236,7 @@
             this.Controls.Add(this.mDataGridView);
             this.Controls.Add(this.mCallIdDataGridView);
             this.Controls.Add(this.statusStrip1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "CallStateViewerMain";
             this.Text = "VH Call State Viewer";
             this.DragDrop += new System.Windows.Forms.DragEventHandler(this.Form1_DragDrop);

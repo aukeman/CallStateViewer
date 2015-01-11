@@ -366,6 +366,7 @@ namespace CallStateViewer
             var summaryFilter = new ToolStripMenuItem("&Filter Call Summary", null, new EventHandler(delegate(object sender, EventArgs e)
             {
                 this.summaryFilterDialog.Show();
+                this.summaryFilterDialog.BringToFront();
             }));
             summaryFilter.Enabled = this.loadedFiles.Any() && !this.Busy;
 
