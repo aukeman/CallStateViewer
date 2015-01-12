@@ -75,12 +75,8 @@ namespace CallStateViewer.View
             this.applyButton.Enabled = false;
 
             if ( this.regexCheckBox.Checked &&
-                (!CheckForValidRegex(callIdFilterComboBox) ||
-                 !CheckForValidRegex(finalStateFilterComboBox) ||
-                 !CheckForValidRegex(recordNameFilterComboBox) ||
-                 !CheckForValidRegex(recordValueFilterComboBox)))
+                !FilterHelper.CheckForFilterTextComboBoxErrors(this, new ComboBox[] {callIdFilterComboBox, finalStateFilterComboBox, recordNameFilterComboBox, recordValueFilterComboBox}))
             {
-                MessageBox.Show(this, "Invalid regular expression Detected.  Correct and submit again.", "Invalid Regular Expression", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
@@ -107,13 +103,13 @@ namespace CallStateViewer.View
             Filter.CallbackAttemptsMaxActive = callbackAttemptsMaxEnabledCheckBox.Checked;
             Filter.CallbackAttemptsMax = (int)callbackAttemptsMaxNumericUpDown.Value;
 
-            UpdateDropDownWithFilterText(callIdFilterComboBox);
-            UpdateDropDownWithFilterText(finalStateFilterComboBox);
-            UpdateDropDownWithFilterText(recordNameFilterComboBox);
-            UpdateDropDownWithFilterText(recordValueFilterComboBox);
-
             this.Filter.UseRegex = this.regexCheckBox.Checked;
             this.Filter.CaseSensitive = this.caseSensitiveCheckBox.Checked;
+
+            FilterHelper.UpdateDropDownWithFilterText(callIdFilterComboBox);
+            FilterHelper.UpdateDropDownWithFilterText(finalStateFilterComboBox);
+            FilterHelper.UpdateDropDownWithFilterText(recordNameFilterComboBox);
+            FilterHelper.UpdateDropDownWithFilterText(recordValueFilterComboBox);
 
             if (FilterUpdated != null)
             {
@@ -163,11 +159,7 @@ namespace CallStateViewer.View
 
         private void filterComboBox_TextChanged(object sender, EventArgs e)
         {
-
-            if ( sender is ComboBox )
-            {
-                (sender as ComboBox).BackColor = SystemColors.Window;
-            }
+            FilterHelper.ResetTextFilterComboBoxErrorState(sender as ComboBox);
 
             this.okButton.Enabled = true;
             this.applyButton.Enabled = true;
@@ -195,11 +187,11 @@ namespace CallStateViewer.View
         {
             if ( sender == timeInFilterAfterEnabledCheckBox )
             {
-                UpdateTimeFilterSensitivity(timeInFilterAfterEnabledCheckBox.Checked, timeInAfterDateTimePicker, Filter.TimeInAfter);
+                FilterHelper.UpdateTimeFilterSensitivity(timeInFilterAfterEnabledCheckBox.Checked, timeInAfterDateTimePicker, Filter.TimeInAfter);
             }
             else if ( sender == timeInFilterBeforeEnabledCheckBox )
             {
-                UpdateTimeFilterSensitivity(timeInFilterBeforeEnabledCheckBox.Checked, timeInBeforeDateTimePicker, Filter.TimeInBefore);
+                FilterHelper.UpdateTimeFilterSensitivity(timeInFilterBeforeEnabledCheckBox.Checked, timeInBeforeDateTimePicker, Filter.TimeInBefore);
             }
             else if ( sender == timeInEmptyCheckBox )
             {
@@ -207,11 +199,11 @@ namespace CallStateViewer.View
             }
             else if ( sender == finalStateTimeFilterAfterEnabledCheckBox )
             {
-                UpdateTimeFilterSensitivity(finalStateTimeFilterAfterEnabledCheckBox.Checked, finalStateTimeAfterDateTimePicker, Filter.FinalStateTimeAfter);
+                FilterHelper.UpdateTimeFilterSensitivity(finalStateTimeFilterAfterEnabledCheckBox.Checked, finalStateTimeAfterDateTimePicker, Filter.FinalStateTimeAfter);
             }
             else if ( sender == finalStateTimeFilterBeforeEnabledCheckBox )
             {
-                UpdateTimeFilterSensitivity(finalStateTimeFilterBeforeEnabledCheckBox.Checked, finalStateTimeBeforeDateTimePicker, Filter.FinalStateTimeBefore);
+                FilterHelper.UpdateTimeFilterSensitivity(finalStateTimeFilterBeforeEnabledCheckBox.Checked, finalStateTimeBeforeDateTimePicker, Filter.FinalStateTimeBefore);
             }
             else if (sender == finalStateTimeEmptyCheckBox )
             {
@@ -230,16 +222,6 @@ namespace CallStateViewer.View
             this.applyButton.Enabled = true;
         }
 
-        private void UpdateTimeFilterSensitivity(bool sensitivity, DateTimePicker dateTimePicker, DateTime currentFilterValue)
-        {
-            dateTimePicker.Enabled = sensitivity;
-
-            if (sensitivity)
-            {
-                dateTimePicker.Value = currentFilterValue;
-            }
-        }
-
         private void UpdateCallbackAttemptsFilterSensitivity(bool sensitivity, NumericUpDown numericUpDown, int currentFilterValue )
         {
             numericUpDown.Enabled = sensitivity;
@@ -247,14 +229,6 @@ namespace CallStateViewer.View
             if (sensitivity)
             {
                 numericUpDown.Value = currentFilterValue;
-            }
-        }
-
-        private void UpdateDropDownWithFilterText(ComboBox comboBox)
-        {
-            if ( comboBox.Text != "" && !comboBox.Items.Contains(comboBox.Text))
-            {
-                comboBox.Items.Add(comboBox.Text);
             }
         }
 

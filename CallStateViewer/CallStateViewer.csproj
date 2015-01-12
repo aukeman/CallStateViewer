@@ -47,7 +47,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="View\DataRecordFilterDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\DataRecordFilterDialog.Designer.cs">
+      <DependentUpon>DataRecordFilterDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="Model\CallSummary.cs" />
+    <Compile Include="View\DataRecordFilter.cs" />
+    <Compile Include="View\FilterHelper.cs" />
     <Compile Include="View\SummaryFilter.cs" />
     <Compile Include="View\CallStateViewerMain.cs">
       <SubType>Form</SubType>
@@ -77,6 +85,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="View\DataRecordFilterDialog.resx">
+      <DependentUpon>DataRecordFilterDialog.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="View\SummaryFilterDialog.resx">
       <DependentUpon>SummaryFilterDialog.cs</DependentUpon>
     </EmbeddedResource>

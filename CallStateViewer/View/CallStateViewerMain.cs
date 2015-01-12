@@ -28,6 +28,7 @@ namespace CallStateViewer
         string[] loadedFiles = {};
 
         SummaryFilterDialog summaryFilterDialog = new SummaryFilterDialog();
+        DataRecordFilterDialog dataRecordFilterDialog = new DataRecordFilterDialog();
 
         public CallStateViewerMain()
         {
@@ -37,10 +38,16 @@ namespace CallStateViewer
             mDataGridView.AutoGenerateColumns = false;
 
             summaryFilterDialog.Hide();
+            dataRecordFilterDialog.Hide();
 
             summaryFilterDialog.FilterUpdated += new EventHandler(delegate(object sender, EventArgs e)
             {
                 DisplayCallSummaryTable();
+            });
+
+            dataRecordFilterDialog.FilterUpdated += new EventHandler(delegate(object sender, EventArgs e)
+            {
+                DisplayLogRecordsTable();
             });
         }
 
@@ -132,6 +139,7 @@ namespace CallStateViewer
                 if (minimumTime != DateTime.MinValue)
                 {
                     summaryFilterDialog.SetTimeSpan(minimumTime, maximumTime);
+                    dataRecordFilterDialog.SetTimeSpan(minimumTime, maximumTime);
                 }
 
                 this.Busy = false;
@@ -219,6 +227,43 @@ namespace CallStateViewer
             return callSummary.Where(c => summaryFilterDialog.Filter.Passes(c));
         }
 
+        private void DisplayLogRecordsTable()
+        {
+            if (0 < mCallIdDataGridView.SelectedRows.Count)
+            {
+                var callIds = from DataGridViewRow row in mCallIdDataGridView.SelectedRows
+                              select row.Cells[0].Value.ToString();
+
+                var callEvents = (from record in records
+                                  where callIds.Contains(record.CallId) &&
+                                        dataRecordFilterDialog.Filter.Passes(record)
+                                  select record).Distinct();
+
+                var callEventsBindingSource = new BindingSource();
+                callEventsBindingSource.DataSource = callEvents;
+                mDataGridView.DataSource = callEventsBindingSource;
+
+                mDataGridView.Columns[0].Visible = (1 < mCallIdDataGridView.SelectedRows.Count);
+
+                for (int row_idx = 0; row_idx < mDataGridView.RowCount - 1; ++row_idx)
+                {
+                    CallDataRecord thisRow = mDataGridView.Rows[row_idx].DataBoundItem as CallDataRecord;
+                    CallDataRecord nextRow = mDataGridView.Rows[row_idx + 1].DataBoundItem as CallDataRecord;
+
+                    if (thisRow.CallId != nextRow.CallId)
+                    {
+                        mDataGridView.Rows[row_idx].DividerHeight = 3;
+                    }
+                }
+
+            }
+            else
+            {
+                mDataGridView.Columns[0].Visible = false;
+                mDataGridView.DataSource = null;
+            }
+        }
+
         private void mDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
             DataGridView dataGridView = sender as DataGridView;
@@ -243,38 +288,7 @@ namespace CallStateViewer
 
         private void mCallIdDataGridView_SelectionChanged(object sender, EventArgs e)
         {
-            if ( 0 < mCallIdDataGridView.SelectedRows.Count )
-            {
-                var callIds = from DataGridViewRow row in mCallIdDataGridView.SelectedRows
-                              select row.Cells[0].Value.ToString();
-
-                var callEvents = (from record in records
-                                  where callIds.Contains(record.CallId)
-                                  select record).Distinct();
-
-                var callEventsBindingSource = new BindingSource();
-                callEventsBindingSource.DataSource = callEvents;
-                mDataGridView.DataSource = callEventsBindingSource;
-
-                mDataGridView.Columns[0].Visible = (1 < mCallIdDataGridView.SelectedRows.Count);
-
-                for ( int row_idx = 0; row_idx < mDataGridView.RowCount-1; ++row_idx)
-                {
-                    CallDataRecord thisRow = mDataGridView.Rows[row_idx].DataBoundItem as CallDataRecord;
-                    CallDataRecord nextRow = mDataGridView.Rows[row_idx+1].DataBoundItem as CallDataRecord;
-
-                    if ( thisRow.CallId != nextRow.CallId )
-                    {
-                        mDataGridView.Rows[row_idx].DividerHeight = 3;
-                    }
-                }
-
-            }
-            else
-            {
-                mDataGridView.Columns[0].Visible = false;
-                mDataGridView.DataSource = null;
-            }
+            DisplayLogRecordsTable();
         }
 
         private void Form1_DragDrop(object sender, DragEventArgs e)
@@ -422,6 +436,15 @@ namespace CallStateViewer
 
             var reload = BuildReloadMenuItem();
 
+            var dataRecordFilter = new ToolStripMenuItem("&Filter Log Records", null, new EventHandler(delegate(object sender, EventArgs e)
+            {
+                this.dataRecordFilterDialog.Show();
+                this.dataRecordFilterDialog.BringToFront();
+            }));
+            dataRecordFilter.Enabled = this.loadedFiles.Any() && !this.Busy;
+            
+            contextMenuStrip.Items.Add(dataRecordFilter);
+            contextMenuStrip.Items.Add((new ToolStripSeparator()));
             contextMenuStrip.Items.Add(reload);
         }
 
