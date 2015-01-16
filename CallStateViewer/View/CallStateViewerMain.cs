@@ -68,6 +68,8 @@ namespace CallStateViewer
                 this.busy = value;
                 this.progressBar.Visible = value;
                 this.UseWaitCursor = value;
+                this.mCallIdDataGridView.Enabled = !value;
+                this.mLogRecordDataGridView.Enabled = !value;
             }
         }
 
@@ -242,32 +244,36 @@ namespace CallStateViewer
         {
             if (0 < mCallIdDataGridView.SelectedRows.Count)
             {
-                var callIds = from DataGridViewRow row in mCallIdDataGridView.SelectedRows
-                              select row.Cells[0].Value.ToString();
+                string[] callIds = GetSelectedCallIds();
+                BindingSource callEventsBindingSource = null;
 
-                var callEvents = (from record in records
-                                  where callIds.Contains(record.CallId) &&
-                                        (!logRecordFilterEnableCheckBox.Checked || dataRecordFilterDialog.Filter.Passes(record))
-                                  select record).Distinct();
-
-                var callEventsBindingSource = new BindingSource();
-                callEventsBindingSource.DataSource = callEvents;
-                mLogRecordDataGridView.DataSource = callEventsBindingSource;
-
-                mLogRecordDataGridView.Columns[0].Visible = (1 < mCallIdDataGridView.SelectedRows.Count);
-
-                for (int row_idx = 0; row_idx < mLogRecordDataGridView.RowCount - 1; ++row_idx)
+                if (mCallIdDataGridView.SelectedRows.Count < 4)
                 {
-                    CallDataRecord thisRow = mLogRecordDataGridView.Rows[row_idx].DataBoundItem as CallDataRecord;
-                    CallDataRecord nextRow = mLogRecordDataGridView.Rows[row_idx + 1].DataBoundItem as CallDataRecord;
+                    callEventsBindingSource = GetCallEventsBindingSource(callIds);
+                    DisplayCallEvents(callEventsBindingSource);
+                }
+                else
+                {
+                    this.Busy = true;
 
-                    if (thisRow.CallId != nextRow.CallId)
+                    BackgroundWorker worker = new BackgroundWorker();
+
+                    worker.DoWork += delegate(object sender, DoWorkEventArgs e)
                     {
-                        mLogRecordDataGridView.Rows[row_idx].DividerHeight = 3;
-                    }
+                        callEventsBindingSource = GetCallEventsBindingSource(callIds);
+                    };
+
+                    worker.RunWorkerCompleted += delegate(object sender, RunWorkerCompletedEventArgs e)
+                    {
+                        //callEventsBindingSource = GetCallEventsBindingSource();
+                        DisplayCallEvents(callEventsBindingSource);
+                        this.Busy = false;
+                    };
+
+                    worker.RunWorkerAsync();
                 }
 
-                logRecordFilterEnableCheckBox.Enabled = dataRecordFilterDialog.Filter.Active;
+
             }
             else
             {
@@ -276,6 +282,47 @@ namespace CallStateViewer
 
                 logRecordFilterEnableCheckBox.Enabled = false;
             }
+        }
+
+        private BindingSource GetCallEventsBindingSource(string[] callIds)
+        {
+            var callEvents =  (from record in records
+                                where callIds.Contains(record.CallId) &&
+                                      (!logRecordFilterEnableCheckBox.Checked || dataRecordFilterDialog.Filter.Passes(record))
+                                select record).Distinct();
+
+            var callEventsBindingSource = new BindingSource();
+            callEventsBindingSource.DataSource = callEvents;
+
+            return callEventsBindingSource;
+        }
+
+        string[] GetSelectedCallIds()
+        {
+            var callIds = from DataGridViewRow row in mCallIdDataGridView.SelectedRows
+                          select row.Cells[0].Value.ToString();
+
+            return callIds.ToArray();
+        }
+
+        private void DisplayCallEvents(BindingSource callEventsBindingSource)
+        {
+            mLogRecordDataGridView.DataSource = callEventsBindingSource;
+
+            mLogRecordDataGridView.Columns[0].Visible = (1 < mCallIdDataGridView.SelectedRows.Count);
+
+            for (int row_idx = 0; row_idx < mLogRecordDataGridView.RowCount - 1; ++row_idx)
+            {
+                CallDataRecord thisRow = mLogRecordDataGridView.Rows[row_idx].DataBoundItem as CallDataRecord;
+                CallDataRecord nextRow = mLogRecordDataGridView.Rows[row_idx + 1].DataBoundItem as CallDataRecord;
+
+                if (thisRow.CallId != nextRow.CallId)
+                {
+                    mLogRecordDataGridView.Rows[row_idx].DividerHeight = 3;
+                }
+            }
+
+            logRecordFilterEnableCheckBox.Enabled = dataRecordFilterDialog.Filter.Active;
         }
 
         private void mDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
