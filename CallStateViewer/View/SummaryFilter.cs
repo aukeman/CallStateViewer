@@ -22,6 +22,25 @@ namespace CallStateViewer.View
                     FilterHelper.PassesMinMaxNumberFilter(CallbackAttemptsMinActive, CallbackAttemptsMin, CallbackAttemptsMaxActive, CallbackAttemptsMax, callSummary.CallbackAttempts));
         }
 
+        public bool Active
+        {
+            get
+            {
+                return (CallId != string.Empty ||
+                        FinalState != string.Empty ||
+                        RecordName != string.Empty ||
+                        RecordValue != string.Empty ||
+                        TimeInAfterActive ||
+                        TimeInBeforeActive ||
+                        TimeInEmpty ||
+                        FinalStateTimeAfterActive ||
+                        FinalStateTimeBeforeActive ||
+                        FinalStateTimeEmpty ||
+                        CallbackAttemptsMinActive ||
+                        CallbackAttemptsMaxActive);
+            }
+        }
+
         public string CallId
         {
             get;

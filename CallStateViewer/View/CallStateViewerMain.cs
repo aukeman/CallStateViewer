@@ -35,18 +35,26 @@ namespace CallStateViewer
             InitializeComponent();
 
             mCallIdDataGridView.AutoGenerateColumns = false;
-            mDataGridView.AutoGenerateColumns = false;
+            mLogRecordDataGridView.AutoGenerateColumns = false;
 
             summaryFilterDialog.Hide();
             dataRecordFilterDialog.Hide();
 
             summaryFilterDialog.FilterUpdated += new EventHandler(delegate(object sender, EventArgs e)
             {
+                callSummaryFilterEnableCheckBox.Checked = 
+                    callSummaryFilterEnableCheckBox.Enabled = 
+                    summaryFilterDialog.Filter.Active;
+
                 DisplayCallSummaryTable();
             });
 
             dataRecordFilterDialog.FilterUpdated += new EventHandler(delegate(object sender, EventArgs e)
             {
+                logRecordFilterEnableCheckBox.Checked = 
+                    logRecordFilterEnableCheckBox.Enabled = 
+                    dataRecordFilterDialog.Filter.Active;
+
                 DisplayLogRecordsTable();
             });
         }
@@ -192,10 +200,13 @@ namespace CallStateViewer
 
                 mCallIdDataGridView.DataSource = callIdsBindingSource;
 
-                mCallIdDataGridView.Width = mCallIdDataGridView.PreferredSize.Width;
+                mCallIdDataGridView.Width = callSummaryPanel.Width = mCallIdDataGridView.PreferredSize.Width;
+
                 mCallIdDataGridView.Columns[4].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
 
                 statusLabel.Text = statusLabelText;
+
+                callSummaryFilterEnableCheckBox.Enabled = (summaryFilterDialog.Filter.Active && (0 < mCallIdDataGridView.Rows.Count));
 
                 this.Busy = false;
             };
@@ -224,7 +235,7 @@ namespace CallStateViewer
                                   Records = g
                               };
 
-            return callSummary.Where(c => summaryFilterDialog.Filter.Passes(c));
+            return callSummary.Where(c => !callSummaryFilterEnableCheckBox.Checked || summaryFilterDialog.Filter.Passes(c));
         }
 
         private void DisplayLogRecordsTable()
@@ -236,31 +247,34 @@ namespace CallStateViewer
 
                 var callEvents = (from record in records
                                   where callIds.Contains(record.CallId) &&
-                                        dataRecordFilterDialog.Filter.Passes(record)
+                                        (!logRecordFilterEnableCheckBox.Checked || dataRecordFilterDialog.Filter.Passes(record))
                                   select record).Distinct();
 
                 var callEventsBindingSource = new BindingSource();
                 callEventsBindingSource.DataSource = callEvents;
-                mDataGridView.DataSource = callEventsBindingSource;
+                mLogRecordDataGridView.DataSource = callEventsBindingSource;
 
-                mDataGridView.Columns[0].Visible = (1 < mCallIdDataGridView.SelectedRows.Count);
+                mLogRecordDataGridView.Columns[0].Visible = (1 < mCallIdDataGridView.SelectedRows.Count);
 
-                for (int row_idx = 0; row_idx < mDataGridView.RowCount - 1; ++row_idx)
+                for (int row_idx = 0; row_idx < mLogRecordDataGridView.RowCount - 1; ++row_idx)
                 {
-                    CallDataRecord thisRow = mDataGridView.Rows[row_idx].DataBoundItem as CallDataRecord;
-                    CallDataRecord nextRow = mDataGridView.Rows[row_idx + 1].DataBoundItem as CallDataRecord;
+                    CallDataRecord thisRow = mLogRecordDataGridView.Rows[row_idx].DataBoundItem as CallDataRecord;
+                    CallDataRecord nextRow = mLogRecordDataGridView.Rows[row_idx + 1].DataBoundItem as CallDataRecord;
 
                     if (thisRow.CallId != nextRow.CallId)
                     {
-                        mDataGridView.Rows[row_idx].DividerHeight = 3;
+                        mLogRecordDataGridView.Rows[row_idx].DividerHeight = 3;
                     }
                 }
 
+                logRecordFilterEnableCheckBox.Enabled = dataRecordFilterDialog.Filter.Active;
             }
             else
             {
-                mDataGridView.Columns[0].Visible = false;
-                mDataGridView.DataSource = null;
+                mLogRecordDataGridView.Columns[0].Visible = false;
+                mLogRecordDataGridView.DataSource = null;
+
+                logRecordFilterEnableCheckBox.Enabled = false;
             }
         }
 
@@ -312,10 +326,10 @@ namespace CallStateViewer
             Point p = new Point(MousePosition.X, MousePosition.Y);
 
             Point callIdCoord = mCallIdDataGridView.PointToClient(p);
-            Point logRecordCoord = mDataGridView.PointToClient(p);
+            Point logRecordCoord = mLogRecordDataGridView.PointToClient(p);
 
             DataGridView.HitTestInfo callIdHitTestInfo = mCallIdDataGridView.HitTest(callIdCoord.X, callIdCoord.Y);
-            DataGridView.HitTestInfo logRecordHitTestInfo = mDataGridView.HitTest(logRecordCoord.X, logRecordCoord.Y);
+            DataGridView.HitTestInfo logRecordHitTestInfo = mLogRecordDataGridView.HitTest(logRecordCoord.X, logRecordCoord.Y);
 
             e.Cancel = false;
 
@@ -331,7 +345,7 @@ namespace CallStateViewer
             {
                 BuildLogRecordTableContextMenu(logRecordHitTestInfo.RowIndex);
             }
-            else if (mDataGridView.ClientRectangle.Contains(logRecordCoord))
+            else if (mLogRecordDataGridView.ClientRectangle.Contains(logRecordCoord))
             {
                 BuildLogRecordTableContextMenu(-1);
             }
@@ -398,10 +412,10 @@ namespace CallStateViewer
             if (-1 < rowIndex)
             {
 
-                var callId = (mDataGridView.Rows[rowIndex].DataBoundItem as CallDataRecord).CallId;
+                var callId = (mLogRecordDataGridView.Rows[rowIndex].DataBoundItem as CallDataRecord).CallId;
                 var copyClickedCallId = BuildCopyCallIdMenuItem(callId);
 
-                var numberOfSelectedRows = mDataGridView.SelectedRows.Count;
+                var numberOfSelectedRows = mLogRecordDataGridView.SelectedRows.Count;
 
                 var label =
                     String.Format("Copy &selected Log Record{0} to Clipboard", (1 < numberOfSelectedRows ? "s" : ""));
@@ -411,7 +425,7 @@ namespace CallStateViewer
                     // if the call IDs are taken from the selected rows collection, they are in the 
                     // order they were selected.
                     // This way they are in the order they appear on screen
-                    var selectedLogRecords = from logRow in mDataGridView.Rows.Cast<DataGridViewRow>()
+                    var selectedLogRecords = from logRow in mLogRecordDataGridView.Rows.Cast<DataGridViewRow>()
                                              where logRow.Selected
                                              select MainReportParser.LogStringFromCallDataRecord(logRow.DataBoundItem as CallDataRecord);
 
@@ -422,7 +436,7 @@ namespace CallStateViewer
 
                 var copyAllLogRecords = new ToolStripMenuItem("Copy &all Log Records to Clipboard", null, new EventHandler(delegate(object sender, EventArgs e)
                 {
-                    var allLogRecords = from logRow in mDataGridView.Rows.Cast<DataGridViewRow>()
+                    var allLogRecords = from logRow in mLogRecordDataGridView.Rows.Cast<DataGridViewRow>()
                                         select MainReportParser.LogStringFromCallDataRecord(logRow.DataBoundItem as CallDataRecord);
 
                     Clipboard.SetText(String.Join(Environment.NewLine, allLogRecords));
@@ -466,6 +480,18 @@ namespace CallStateViewer
             result.Enabled = this.loadedFiles.Any() && !this.Busy;
 
             return result;
+        }
+
+        private void filterEnableCheckBox_Click(object sender, EventArgs e)
+        {
+            if (sender == callSummaryFilterEnableCheckBox)
+            {
+                DisplayCallSummaryTable();
+            }
+            else if (sender == logRecordFilterEnableCheckBox)
+            {
+                DisplayLogRecordsTable();
+            }
         }
     }
 }

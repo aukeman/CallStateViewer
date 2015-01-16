@@ -16,6 +16,17 @@ namespace CallStateViewer.View
                     FilterHelper.PassesTimeFilter(callDataRecord.Timestamp, TimeAfterActive, TimeAfter, TimeBeforeActive, TimeBefore, false));
         }
 
+        public bool Active
+        {
+            get
+            {
+                return (RecordName != string.Empty ||
+                        RecordValue != string.Empty ||
+                        TimeAfterActive ||
+                        TimeBeforeActive);
+            }
+        }
+
         public string RecordName
         {
             get;
