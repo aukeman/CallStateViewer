@@ -44,7 +44,7 @@ namespace CallStateViewer.Parser
         {
             var result = new List<CallDataRecord>();
 
-            using (var r = new StreamReader(filepath))
+            using (var r = new StreamReader( new FileStream(filepath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite) ) )
             {
                 while (!r.EndOfStream)
                 {
